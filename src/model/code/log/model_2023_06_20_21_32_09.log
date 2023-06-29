@@ -1,0 +1,11 @@
+06/20/2023 21:32:29 PM - INFO : running on device cuda
+06/20/2023 21:32:29 PM - INFO : Optimizer:AdamW
+06/20/2023 22:45:04 PM - INFO : epoch: 1 -- time: 4355.46s
+06/20/2023 23:57:38 PM - INFO : epoch: 2 -- time: 4353.96s
+06/21/2023 01:10:08 AM - INFO : epoch: 3 -- time: 4350.04s
+06/21/2023 02:22:39 AM - INFO : epoch: 4 -- time: 4350.53s
+06/21/2023 03:35:10 AM - INFO : epoch: 5 -- time: 4351.10s
+06/21/2023 04:47:39 AM - INFO : epoch: 6 -- time: 4349.33s
+06/21/2023 06:00:08 AM - INFO : epoch: 7 -- time: 4348.76s
+06/21/2023 07:12:39 AM - INFO : epoch: 8 -- time: 4351.16s
+06/21/2023 08:25:09 AM - INFO : epoch: 9 -- time: 4350.05s

@@ -1,0 +1,39 @@
+
+
+一 ：价值分类
+std很多简单类型，我们认为这个属于低价值，
+低价值情况： 1 api的原子操作() 如 as_mut
+2 实际意义为0 如as_bytes_mut 实际上是unsafe去掉所有的unsafe操作变成了safe
+3 unchecked 修改完全相同 就是去掉unchecked 也算是实际意义为0
+
+
+数据集里api只有一种情况的不直接算低价值，只看是否有用
+
+github有很多复杂类型，带语义的unsafesafe转换，这个属于高价值
+实际场景的unsafe都是高价值，
+
+
+二：没有safe版本的怎么办
+另外无法转换成safe的如何区分？也可能是我们水平不够无法转成safe，这个怎么分？
+1 无法转safe单独自己一类 既不属于高价值也不属于低价值
+
+2 无法转换safe 打散放入高价值低价值，比如一个nonnull的指针，放在低价值里
+倾向于第二个选择，就是无法匹配，也有价值高低问题
+
+三：有safe的
+优先全体分类，不考虑safe版本，先分类做实验
+目前的有safe的一些api版本，问题在于两个 
+1 是有safe但是修改非常ez 没有意义的safe修改
+2 有safe能明确看出来又价值
+
+四：分好价值类的api
+1 即便分好价值类了，还有一个pattern类需要考虑
+    pattern类 目前看来三个特点
+    1 同pattern 同safe
+    2 不同pattern safe不同
+    3 存在同pattern 不同safe办法，或者有的无safe
+    4 大部分分好类的api不存在多个pattern 或者只有两个左右pattern
+
+
+
+出现重复api就放到低价值中了

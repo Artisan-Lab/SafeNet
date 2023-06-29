@@ -1,0 +1,24 @@
+[
+  {
+    "id": "as_ref_5",
+    "category": "as_ref",
+    "text": ['null xxxxx'],
+    "index": 5
+  }
+
+  {
+
+    "id": "test_xxxx",
+    "category": "as_ref",
+    "text": ['null xxxxx'],
+    "similarity": ['as_ref_5']
+  },
+
+
+
+
+  }
+
+]
+
+

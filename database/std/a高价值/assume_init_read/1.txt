@@ -1,0 +1,3 @@
+如果是没有copy的 不能多次free，但是这是错误用法，
+与绕过这个assumeinit_read 关系较浅 
+跟assuminit一样

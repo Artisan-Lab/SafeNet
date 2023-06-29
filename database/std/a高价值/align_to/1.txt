@@ -1,0 +1,19 @@
+from_be_bytes 可以解决
+
+
+
+use std::mem;
+
+fn main() {
+    let u8_array: [u8; 4] = [1, 2, 3, 4];
+
+    // 转换为 [u16; 2] 类型的数组
+    let u16_array: [u16; 2] = unsafe { mem::transmute(u8_array) };
+
+    println!("{:?}", u16_array);
+}
+
+
+先transmute 再用from_be_bytes
+
+但是这里1 2 代码其实一样
