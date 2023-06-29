@@ -26,21 +26,21 @@ def complete_tree(node):
         if child.value == '()':
             child.add_child(TreeNode('0'))
         complete_tree(child)
-
-        # Update the value of the current node with the number of children
         node.value = f"{len(node.children)}"
 
-    # Remove empty parentheses children
     node.children = [child for child in node.children if child.value != '()']
 
 
 def save_preorder_traversal(tree):
-    return ' '.join(tree.preorder_traversal())
+    return ' '.join(tree.preorder_traversal()[1:])
 
 
 def process_file(file_path):
     with open(file_path, 'r') as file:
         node_str = file.read().strip()
+
+    # 修改点1：去掉相邻的"()"
+    node_str = node_str.replace('()', '')
 
     # 构建树结构
     tree = TreeNode('')
@@ -68,6 +68,12 @@ def process_file(file_path):
     # 健全树结构并保存前序遍历序列
     complete_tree(tree)
     preorder_sequence = save_preorder_traversal(tree)
+    if preorder_sequence:
+        numbers = preorder_sequence.split()
+        if numbers[0].isdigit():
+            numbers[0] = str(int(numbers[0]) - 1)
+            preorder_sequence = ' '.join(numbers)
+
     return preorder_sequence
 
 
@@ -87,4 +93,3 @@ for file_name in os.listdir(input_folder):
 
         with open(output_file_path, 'w') as output_file:
             json.dump(preorder_sequence, output_file)
-
