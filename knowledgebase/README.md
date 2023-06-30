@@ -3,9 +3,23 @@
 low 表示是完全的直接使用完全没用
 high 只要有点用就可以给
 
+# Unsafe APIs that do not need machine learning: 
+| Pattern Name | API | Replacement Strategy | Pattern ID: Discription | Case | 
+|---------|---------|---------|---------|---------|
+| unchecked | \*unchecked\* | all unchecked APIs can be replaced with a safe API by removing unchecked | ignore boundary check | |
+| - |  |
+| - | ...over 20... |
+| wrapping | add |  wrapping_add | ignore arithmatic overflow | |
+| - | sub | wrapping_sub |
+| - | byte_add | wrapping_byte_add｜
+| - | byte_sub | wrapping_byte_sub |
+| - | byte_offset | wrapping_offset | 
+| - | byte_offset_from? |
+
 
 | ID | API | Pattern ID: Discription | Pattern Value | Case | 
 |---------|---------|---------|---------|---------|
+| as_uninit_slice |
 | 1 | add | 1: 本例子是裸指针直接调用add | LOW  | 1-ptr-simple-unsafe-low.rs | 
 | 2 | align_to | 1: 把一个数组按位切换类型，目前看来必须unsafe，可以transmute+from_be_bytes，但还是unsafe, 因为这个替换所以给到high | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 1-vec-simple-unsafe-high.rs | 
 | 3 | align_to_mut | 1: 同上 | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 2-vec-simple-unsafe-high-high.rs | 
