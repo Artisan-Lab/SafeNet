@@ -7,20 +7,23 @@ high 只要有点用就可以给
 | Pattern Name | API | Replacement Strategy | Pattern ID: Discription | Case | 
 |---------|---------|---------|---------|---------|
 | unchecked | \*unchecked\* | all unchecked APIs can be replaced with a safe API by removing unchecked | ignore boundary check | |
-| - |  |
+| - | get_unchecked | get ｜ 
 | - | ...over 20... |
 | wrapping | add |  wrapping_add | ignore arithmatic overflow | |
-| - | sub | wrapping_sub |
+| - | sub | wrapping_sub | | 1-ptr-simple-unsafe-low.rs <br> 2-ptr-mut-unsafe-low.rs| |
 | - | byte_add | wrapping_byte_add｜
 | - | byte_sub | wrapping_byte_sub |
 | - | byte_offset | wrapping_offset | 
-| - | byte_offset_from? |
+| - | offset | wrapping_offset | |1-ptr-const-unsafe-1-low.rs <br> 1-ptr-const-unsafe-2-low.rs <br> 1-ptr-mut-unsafe-1-low.rs <br> 1-ptr-mut-unsafe-2-low.rs |
+| - | byte_offset | wrapping_byte_offset |
 
 
 ### Unsafe APIs that need machine learning: 
 | ID | API | Pattern ID: Discription | Pattern Value | Case | 
 |---------|---------|---------|---------|---------|
 | as_uninit_slice |
+| - | byte_offset_from? |
+| - | offset_from | 1: misused 与普通版其实没区别，都是基础使用 | low | 1-misused-ptr-mut-unsafe-low.rs <br> 1-ptr-mut-unsafe-low.rs <br>1-ptr-simple-unsafe-low.rs |
 | 1 | add | 1: 本例子是裸指针直接调用add | LOW  | 1-ptr-simple-unsafe-low.rs | 
 | 2 | align_to | 1: 把一个数组按位切换类型，目前看来必须unsafe，可以transmute+from_be_bytes，但还是unsafe, 因为这个替换所以给到high | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 1-vec-simple-unsafe-high.rs | 
 | 3 | align_to_mut | 1: 同上 | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 2-vec-simple-unsafe-high-high.rs | 
@@ -52,8 +55,6 @@ high 只要有点用就可以给
 | 25 | mem::align_of_val_raw | 1: 纯粹调用 | LOW   |1-alignof-simple-unsafe-low.rs|
 | 26 | mem::size_of_val | 1: 纯粹调用 | LOW   |1-sizeof-simple-unsafe-low.rs|
 | 27 | mem::zeroed | 1: 纯粹调用 | LOW   |1-misused-zeroed-simple-unsafe-low.rs <br> 1-zeroed-simple-unsafe-low.rs|
-| 28 | offset | 1: 2个mut 2个const完全没有区别，其实只是调用了下offset展示效果 | LOW   |1-ptr-const-unsafe-1-low.rs <br> 1-ptr-const-unsafe-2-low.rs <br> 1-ptr-mut-unsafe-1-low.rs <br> 1-ptr-mut-unsafe-2-low.rs |
-| 29 | offset_from | 1: misused 与普通版其实没区别，都是基础使用 | low | 1-misused-ptr-mut-unsafe-low.rs <br> 1-ptr-mut-unsafe-low.rs <br>1-ptr-simple-unsafe-low.rs |
 | 30 | Rc::decrement_strong_count| 1: 基础使用 | low | 1-rc-count-simple-unsafe-low.rs |
 | 31 | Rc::from_raw | 1: 与boxfromraw类似，本例与boxfromraw pattern3一致 | low | 1-rcfromraw-simple-unsafe-low.rs |
 | 32 | Rc::increment_strong_count | 1:基础使用 | low | 1-rc+count-simple-unsafe-low.rs |
@@ -63,7 +64,6 @@ high 只要有点用就可以给
 | 35 | set_len | 1: 用setlen创建一个vec给ffi用，无法替换 | **HIGH** | 1-vec-ffi-unsafe-high.rs |
 | -  |set_len | 2: 基础使用，但是这个有使用目的，vec的capacity是确定的，但是vec是翻倍增长的，这个例子用来缩掉vec不用的长度，resize | **HIGH** | 2-vec-shorten-unsafe-high.rs |
 | 36 | slice::from_ptr_range | 1: 返回两个指针夹着的slice 看std中的描述应该是无法替换,这个case确实只是调了一下，但是这个api确实都可以通过指指针一位一位读来解决，标记为high | **HIGH** | 1-slicefromrange-mut-unsafe-high.rs <br> 1-slicefromrange-simple-unsafe-low.rs|
-| 37 | sub | 1: 跟add一样 | LOW  | 1-ptr-simple-unsafe-low.rs <br> 2-ptr-mut-unsafe-low.rs| 
 | 38 | sub_ptr | 1: 基础调用，两个case没区别 | LOW  | 1-ptr-mut-unsafe-low.rs <br> 1-ptr-simple-unsafe-low.rs| 
 | 39 | swap | 1: swap是一个有复杂语义的api，肯定是high，这里三个case虽然调用api的不同,但是用法是完全一样的，在修改方法上没有不同 | **HIGH**  | 1-ptr-nonoverlapping-unsafe-2-high.rs <br> 1-ptr-nonoverlapping-unsafe-high.rs <br> 1-ptr-overlapping-unsafe-high.rs| 
 | 40 | Weak::from_raw | 1: 写的多，但是跟Boxfromraw pattern2 是一样的 | LOW  | 1-weakfromraw-simple-unsafe-low.rs |
@@ -80,5 +80,8 @@ high 只要有点用就可以给
 | -  | String::from_raw_parts | 3: 怕直接用string消耗所有权，所以先用个ptr，用from_raw_parts单纯来生产个ptr，恐怕没有人这么做，价值小，因为是更复杂的用法实现了一个简单的功能 与transmute的as价值差不多 | **HIGH**  | 3-ownership-unsafe.rs |
 | 44 | Vec::from_raw_parts | 1: 与String::from_raw_parts问题相同，这些case改法只有一个就是按位读，这里一个case 1-frommem-unsafe-high.rs，看似多，但是其实就是一堆无效操作，就存了一个数。 这里的1-fromraw-unsafe-high.rs也是无目的一个例子，建议去掉| **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-fromraw-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | - | Vec::from_raw_parts_in | 2: 这个api和上面的Vec::from_raw_parts问题一模一样 | **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
+
+
+
 
 
