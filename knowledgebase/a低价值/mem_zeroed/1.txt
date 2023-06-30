@@ -1,8 +1,0 @@
-1 重复了
-2 和1 算是不重复，至少结构体置零跟普通的不一样 但是本质还是重复
-
-3 裸指针指0 这个显然可以独立一个pattern出来 肯定是用option，以前写allocator用过指零来当null
-
-4 和assumeinit问题重复其实，但是混杂了memzero的问题，如果按照4的方法改还是要绕回去改assumeinit，应该删掉这个4或者合并
-
-5 直接assumeinit 结果就是不知道enum里是什么，问题出在assumeinit，mem zero只影响了元组里的第一个u8 和2是重复的，应该删 或者合并

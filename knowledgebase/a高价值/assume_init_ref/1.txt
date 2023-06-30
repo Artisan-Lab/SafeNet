@@ -1,3 +1,0 @@
-跟assuminitmut一样 这里产生的是immut ref
-
-这里后三个要分还是只能跟assumeinit分在一起

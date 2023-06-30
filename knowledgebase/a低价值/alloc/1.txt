@@ -1,2 +1,0 @@
-alloc可能要去掉 
-global allocator不可避免unsafe

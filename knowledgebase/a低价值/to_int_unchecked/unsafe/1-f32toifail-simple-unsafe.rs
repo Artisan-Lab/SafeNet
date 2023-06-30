@@ -1,8 +1,0 @@
-#![allow(unused)]
-fn main() {
-    let value = 4.6_f64;
-    let rounded = unsafe { value.to_int_unchecked::<u16>() };
-    let value = -128.9_f64;
-    let rounded = unsafe { value.to_int_unchecked::<i8>() };
-    assert_eq!(rounded, i8::MIN);
-}
