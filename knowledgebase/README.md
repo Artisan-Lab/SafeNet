@@ -56,20 +56,16 @@ ARC类型指针 | LOW  |1-arc-count-simple-unsafe.rs |
 | Weak::from_raw | 1 | 写的多，但是跟Boxfromraw pattern2 是一样的 | LOW  | 1-weakfromraw-simple-unsafe-low.rs |
 | write | 1 | 基础使用 | LOW  | 1-ptr-simple-unsafe.rs |
 | write | 2 | swap | **HIGH**  | 2-ptr-write2swap-unsafe-high.rs |
-
 | transmute | 1 | 可以直接用as的用了transmute | **HIGH**   | 1-misused-i32ptrusize-unsafe-high.rs <br> 1-misused-void-unsafe-high.rs|
 | transmute | 2 | 把数组转换成数字读取 | **HIGH**   | 2-misused-bytes2u32-unsafe-high.rs |
 | transmute | 3 | 数组转数组，有一个结合assumeinit的例子是转数组，可以用相同的方法，所以同pattern | **HIGH**   | 3-vec-option-unsafe-high.rs <br> 3-array-maybeuninit-unsafe.rs |
 | transmute | 4 | 裸指针转借用，没法改safe | **HIGH**   | 4-irreplaceable-raw2own-unsafe-high.rs |
 | transmute | 5 | 用transmute来修改生命周期，没法改safe | **HIGH**   | 5-lifetime-extend-unsafe.rs <br> 5-lifetime-shrink-unsafe.rs|
 | transmute | 6 | 误用，按位读取，想用transmute，价值相较于transmute其他低，同pattern1差不多，因为都是更复杂的误用方式 | **HIGH**   | 6-misused-str2u8-unsafe-high.rs |
-
 | String::from_raw_parts | 1 | from_raw_parts 的基本解决方案，从指针处按位读，读到想要的位置，如果这个指针是safe的，那就能safe。这三个case本质是一样，只是分别是iteminc按位指针处+1，fromvec按位转换类型，1-fromraw-unsafe-high.rs 是一个无目的例子，建议去掉 | **HIGH**  | 1-fromraw-unsafe-high.rs <br> 1-fromvec-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | String::from_raw_parts | 2 | 这个本质上是和 pattern1相同，属于类型转换，但是因为String有自己的to_string方法非常方便，所以改法不同了 | **HIGH**  | 2-fromstr-unsafe-high.rs |
 | String::from_raw_parts | 3 | 怕直接用string消耗所有权，所以先用个ptr，用from_raw_parts单纯来生产个ptr，恐怕没有人这么做，价值小，因为是更复杂的用法实现了一个简单的功能 与transmute的as价值差不多 | **HIGH**  | 3-ownership-unsafe.rs |
-
 | Vec::from_raw_parts | 1 | 与String::from_raw_parts问题相同，这些case改法只有一个就是按位读，这里一个case 1-frommem-unsafe-high.rs，看似多，但是其实就是一堆无效操作，就存了一个数。 这里的1-fromraw-unsafe-high.rs也是无目的一个例子，建议去掉| **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-fromraw-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
-
 | Vec::from_raw_parts_in | 1 | 这个api和上面的Vec::from_raw_parts问题一模一样 | **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 
 
