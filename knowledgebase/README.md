@@ -26,12 +26,27 @@
 
 | ID | API | Pattern ID: Discription | Pattern Value | Case | 
 |---------|---------|---------|---------|---------|
-| 1 | align_to | 1: 把一个数组按位切换类型，目前看来必须unsafe，可以transmute+from_be_bytes，但还是unsafe, 因为这个替换所以给到high | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 1-vec-simple-unsafe-high.rs | 
-| 3 | align_to_mut | 1: 同上 | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 2-vec-simple-unsafe-high-high.rs | 
-| 4 | alloc | 1: global allocator不可避免unsafe, 但是复杂语义如果尝试使用alloc的话可能有不同形式 | LOW  |1-alloc-simple-unsafe-low.rs <br> 1-alloczero-simple-unsafe-low.rs | 
 | 5 | Arc::decrement_strong_count | 1: 太简单 | LOW  |1-arc-count-simple-unsafe.rs | 
 | 6 | Arc::from_raw | 1: 太简单 从裸指针构建一个ARC类型指针 | LOW  |1-arc-count-simple-unsafe.rs | 
 | 7 | Arc::increment_strong_count | 1: 太简单 同decrement | LOW  |1-arc-count-simple-unsafe.rs | 
+| 18 | Box::from_raw | 1: 把裸指针装到一个box里进行drop，目的是drop指针指向的东西 无法用safe替换  | **HIGH**   |1-drop-unsafe-2-high.rs <br> 1-drop-unsafe-high.rs | 
+| - | Box::from_raw | 2:为了用fromraw而用,先alloc再把位置赋值，转成box传出 case里其实是两个一模一样的代码 | LOW  |2-alloc-unsafe-2-low.rs <br> 2-alloc-unsafe-low.rs| 
+| - | Box::from_raw | 3: 为了用fromraw而用,用into_raw定义一个裸指针,再转回去 | LOW  |3-simple-unsafe-low.rs <br>3-string-unsafe-2-low.rs| 
+| 19 | Box::from_raw_in | 1: 与Box::from_raw pattern2 一样 | LOW  |1-simple-unsafe-low.rs| 
+| - | byte_offset_from? |
+| 20 | CStr::from_ptr | 1: ffi 只单纯调用了一下api | LOW  |1-cstrfromptr-simple-unsafe-low.rs| 
+| - | CStr::from_ptr | 2: 没看懂意思，先给high | **HIGH**  |2-cstrfromptrconst-simple-unsafe-high.rs| 
+| 21 | CString::from_raw | 1: 没看懂意思，先给high | **HIGH**   |1-CStringfromraw-simple-unsafe-high.rs| 
+| 24 | MaybeUninit::array_assume_init| 1:和assumeinit中pattern2出现的实际相同 | **HIGH**   |1-array-simple-unsafe-high.rs|
+| 43 | String::from_raw_parts | 1: from_raw_parts 的基本解决方案，从指针处按位读，读到想要的位置，如果这个指针是safe的，那就能safe。这三个case本质是一样，只是分别是iteminc按位指针处+1，fromvec按位转换类型，1-fromraw-unsafe-high.rs 是一个无目的例子，建议去掉 | **HIGH**  | 1-fromraw-unsafe-high.rs <br> 1-fromvec-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
+| -  | String::from_raw_parts | 2: 这个本质上是和 pattern1相同，属于类型转换，但是因为String有自己的to_string方法非常方便，所以改法不同了 | **HIGH**  | 2-fromstr-unsafe-high.rs |
+| -  | String::from_raw_parts | 3: 怕直接用string消耗所有权，所以先用个ptr，用from_raw_parts单纯来生产个ptr，恐怕没有人这么做，价值小，因为是更复杂的用法实现了一个简单的功能 与transmute的as价值差不多 | **HIGH**  | 3-ownership-unsafe.rs |
+| 44 | Vec::from_raw_parts | 1: 与String::from_raw_parts问题相同，这些case改法只有一个就是按位读，这里一个case 1-frommem-unsafe-high.rs，看似多，但是其实就是一堆无效操作，就存了一个数。 这里的1-fromraw-unsafe-high.rs也是无目的一个例子，建议去掉| **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-fromraw-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
+| - | Vec::from_raw_parts_in | 2: 这个api和上面的Vec::from_raw_parts问题一模一样 | **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
+| 40 | Weak::from_raw | 1: 写的多，但是跟Boxfromraw pattern2 是一样的 | LOW  | 1-weakfromraw-simple-unsafe-low.rs |
+| 1 | align_to | 1: 把一个数组按位切换类型，目前看来必须unsafe，可以transmute+from_be_bytes，但还是unsafe, 因为这个替换所以给到high | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 1-vec-simple-unsafe-high.rs | 
+| 3 | align_to_mut | 1: 同上 | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 2-vec-simple-unsafe-high-high.rs | 
+| 4 | alloc | 1: global allocator不可避免unsafe, 但是复杂语义如果尝试使用alloc的话可能有不同形式 | LOW  |1-alloc-simple-unsafe-low.rs <br> 1-alloczero-simple-unsafe-low.rs | 
 | 8 | as_bytes_mut | 1: 例子是可以把string变成bytes数组来修改值，safe版本是先变成可变字符数组，在目的是修改字符的语义下有意义 | **HIGH** |1-arc-count-simple-unsafe.rs | 
 | 9 | as_mut | 1: 太简单到原子 | LOW  | 1-ptr-nn-unsafe-low.rs <br>1-ptr-simple-unsafe-low.rs| 
 | 10 | as_mut_vec | 1: 返回string的一个可变引用再返回，有现实语义 并且可以转换 实现这个简单的功能 直觉上有很多种 | **HIGH**  |1-string-simple-unsafe-high.rs | 
@@ -46,17 +61,8 @@
 | 16 | assume_init_mut | 1: 与assumeinit类似 这些实际只有一种 | **HIGH**   |1-assumeinitmut-simple-unsafe-high.rs <br> 1-misused-assumeinitmut-readuninit-unsafe-high.rs <br>  1-misused-assumeinitmut-uninit-unsafe-high.rs <br> 1-misused-assumeinitmut-uninitfield-unsafe-high.rs| 
 | 17 | assume_init_read | 1: 与assumeinit类似，这些其实只有一种 | **HIGH**   |1-misused-assumeinitmut-read.rs <br> uninit-unsafe-high.rs <br>  1-assumeinitreadnone-simple-unsafe-high.rs <br>  1-misused-assumeinitread-simple-unsafe-high.rs| 
 | 18 | assume_init_ref | 1: 后面两个是误用但是从unsafe转safe角度上是一样的 | **HIGH**   |1-assumeinitref-simple-unsafe.rs <br> 1-misused-assumeinitref-simple-unsafe.rs <br> 1-misused-assumeinitrefcell-simple-unsafe.rs  | 
-| 18 | Box::from_raw | 1: 把裸指针装到一个box里进行drop，目的是drop指针指向的东西 无法用safe替换  | **HIGH**   |1-drop-unsafe-2-high.rs <br> 1-drop-unsafe-high.rs | 
-| - | Box::from_raw | 2:为了用fromraw而用,先alloc再把位置赋值，转成box传出 case里其实是两个一模一样的代码 | LOW  |2-alloc-unsafe-2-low.rs <br> 2-alloc-unsafe-low.rs| 
-| - | Box::from_raw | 3: 为了用fromraw而用,用into_raw定义一个裸指针,再转回去 | LOW  |3-simple-unsafe-low.rs <br>3-string-unsafe-2-low.rs| 
-| 19 | Box::from_raw_in | 1: 与Box::from_raw pattern2 一样 | LOW  |1-simple-unsafe-low.rs| 
-| - | byte_offset_from? |
-| 20 | CStr::from_ptr | 1: ffi 只单纯调用了一下api | LOW  |1-cstrfromptr-simple-unsafe-low.rs| 
-| - | CStr::from_ptr | 2: 没看懂意思，先给high | **HIGH**  |2-cstrfromptrconst-simple-unsafe-high.rs| 
-| 21 | CString::from_raw | 1: 没看懂意思，先给high | **HIGH**   |1-CStringfromraw-simple-unsafe-high.rs| 
 | 22 | dealloc| 1: 存在safe版本, 但是在case中表现的其实是 我分配一个东西再释放掉，太简单，但是不是完全没意义 | **HIGH**   |1-dealloc-simple-unsafe-high.rs <br> 1-deallocfromzero-simple-unsafe-high.rs|
 | 23 | drop_in_place| 1: 与dealloc 类似 ，用先分配再释放的方式构造的问题，换了个写法 | **HIGH**   |1-ptr-rc-unsafe-high.rs |
-| 24 | MaybeUninit::array_assume_init| 1:和assumeinit中pattern2出现的实际相同 | **HIGH**   |1-array-simple-unsafe-high.rs|
 | 25 | mem::align_of_val_raw | 1: 纯粹调用 | LOW   |1-alignof-simple-unsafe-low.rs|
 | 26 | mem::size_of_val | 1: 纯粹调用 | LOW   |1-sizeof-simple-unsafe-low.rs|
 | 27 | mem::zeroed | 1: 纯粹调用 | LOW   |1-misused-zeroed-simple-unsafe-low.rs <br> 1-zeroed-simple-unsafe-low.rs|
@@ -93,12 +99,6 @@
 | -  |transmute | 4: 裸指针转借用，没法改safe | **HIGH**   | 4-irreplaceable-raw2own-unsafe-high.rs |
 | -  |transmute | 5: 用transmute来修改生命周期，没法改safe | **HIGH**   | 5-lifetime-extend-unsafe.rs <br> 5-lifetime-shrink-unsafe.rs|
 | -  |transmute | 6: 误用，按位读取，想用transmute，价值相较于transmute其他低，同pattern1差不多，因为都是更复杂的误用方式 | **HIGH**   | 6-misused-str2u8-unsafe-high.rs |
-| 43 | String::from_raw_parts | 1: from_raw_parts 的基本解决方案，从指针处按位读，读到想要的位置，如果这个指针是safe的，那就能safe。这三个case本质是一样，只是分别是iteminc按位指针处+1，fromvec按位转换类型，1-fromraw-unsafe-high.rs 是一个无目的例子，建议去掉 | **HIGH**  | 1-fromraw-unsafe-high.rs <br> 1-fromvec-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
-| -  | String::from_raw_parts | 2: 这个本质上是和 pattern1相同，属于类型转换，但是因为String有自己的to_string方法非常方便，所以改法不同了 | **HIGH**  | 2-fromstr-unsafe-high.rs |
-| -  | String::from_raw_parts | 3: 怕直接用string消耗所有权，所以先用个ptr，用from_raw_parts单纯来生产个ptr，恐怕没有人这么做，价值小，因为是更复杂的用法实现了一个简单的功能 与transmute的as价值差不多 | **HIGH**  | 3-ownership-unsafe.rs |
-| 44 | Vec::from_raw_parts | 1: 与String::from_raw_parts问题相同，这些case改法只有一个就是按位读，这里一个case 1-frommem-unsafe-high.rs，看似多，但是其实就是一堆无效操作，就存了一个数。 这里的1-fromraw-unsafe-high.rs也是无目的一个例子，建议去掉| **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-fromraw-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
-| - | Vec::from_raw_parts_in | 2: 这个api和上面的Vec::from_raw_parts问题一模一样 | **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
-| 40 | Weak::from_raw | 1: 写的多，但是跟Boxfromraw pattern2 是一样的 | LOW  | 1-weakfromraw-simple-unsafe-low.rs |
 | 41 | write | 1: 基础使用 | LOW  | 1-ptr-simple-unsafe.rs |
 | -  | write | 2: swap | **HIGH**  | 2-ptr-write2swap-unsafe-high.rs |
 | - |  write_bytes | 
