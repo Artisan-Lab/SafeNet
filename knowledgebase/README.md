@@ -17,13 +17,25 @@ high 只要有点用就可以给
 | - | offset | wrapping_offset | |1-ptr-const-unsafe-1-low.rs <br> 1-ptr-const-unsafe-2-low.rs <br> 1-ptr-mut-unsafe-1-low.rs <br> 1-ptr-mut-unsafe-2-low.rs |
 | - | byte_offset | wrapping_byte_offset |
 
+### Unsafe APIs that cannot be replaced: 
+| API | Justification |
+| read_volatile | we currently don't other safe APIs that enforce the volatile feature |
+| ptr::read_volatile | same as read_volatile |
 
 ### Unsafe APIs that need machine learning: 
 | ID | API | Pattern ID: Discription | Pattern Value | Case | 
 |---------|---------|---------|---------|---------|
-| as_uninit_slice |
+| | as_uninit_slice |
+| | as_uninit_slice_mut |
 | - | byte_offset_from? |
 | - | offset_from | 1: misused 与普通版其实没区别，都是基础使用 | low | 1-misused-ptr-mut-unsafe-low.rs <br> 1-ptr-mut-unsafe-low.rs <br>1-ptr-simple-unsafe-low.rs |
+| - | read_unaligned | 
+| - | ptr::read_unaligned |
+| - |  as_uninit_mut | 
+| - |  write_bytes | 
+| - |  write_volatile | 
+| - |  write_unaligned | 
+| - | split_at_mut |
 | 1 | add | 1: 本例子是裸指针直接调用add | LOW  | 1-ptr-simple-unsafe-low.rs | 
 | 2 | align_to | 1: 把一个数组按位切换类型，目前看来必须unsafe，可以transmute+from_be_bytes，但还是unsafe, 因为这个替换所以给到high | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 1-vec-simple-unsafe-high.rs | 
 | 3 | align_to_mut | 1: 同上 | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 2-vec-simple-unsafe-high-high.rs | 
