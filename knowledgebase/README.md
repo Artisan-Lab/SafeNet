@@ -4,6 +4,7 @@ low 表示是完全的直接使用完全没用
 high 只要有点用就可以给
 
 ### Unsafe APIs that do not need machine learning: 
+
 | Pattern Name | API | Replacement Strategy | Pattern ID: Discription | Case | 
 |---------|---------|---------|---------|---------|
 | unchecked | \*unchecked\* | all unchecked APIs can be replaced with a safe API by removing unchecked | ignore boundary check | |
@@ -18,11 +19,14 @@ high 只要有点用就可以给
 | - | byte_offset | wrapping_byte_offset |
 
 ### Unsafe APIs that cannot be replaced: 
+
 | API | Justification |
+|---------|---------|
 | read_volatile | we currently don't other safe APIs that enforce the volatile feature |
 | ptr::read_volatile | same as read_volatile |
 
 ### Unsafe APIs that need machine learning: 
+
 | ID | API | Pattern ID: Discription | Pattern Value | Case | 
 |---------|---------|---------|---------|---------|
 | | as_uninit_slice |
