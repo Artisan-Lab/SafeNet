@@ -1,9 +1,10 @@
-pub fn get_mut_checked<'a, T>(ptr: *mut T) -> Result<&'a mut T, String> {
-    match check_ptr_is_non_null_and_aligned(ptr) {
-        Ok(()) => unsafe {
-            ptr.as_mut()
-                .ok_or_else(|| "Error while converting to mut reference".into())
-        },
-        Err(e) => Err(e),
+impl Monitor for PythonMonitor {
+    fn client_stats_mut(&mut self) -> &mut Vec<ClientStats> {
+        let ptr = unwrap_me_mut!(self.wrapper, m, {
+            m.client_stats_mut() as *mut Vec<ClientStats>
+        });
+        unsafe { ptr.as_mut().unwrap() }
     }
 }
+ 
+// https://github.com/AFLplusplus/LibAFL/blob/71aa0221a01482097715e695de0fe6197dc90aed/libafl/src/monitors/mod.rs#L1089

@@ -1,18 +1,9 @@
-fn poll(mut self: Pin<&mut Self>, _cx: &mut Context<'_>) -> Poll<()> {
-    if self.value.is_none() {
-        return Poll::Ready(());
+pub fn get_mut_checked<'a, T>(ptr: *mut T) -> Result<&'a mut T, String> {
+    match check_ptr_is_non_null_and_aligned(ptr) {
+        Ok(()) => unsafe {
+            ptr.as_mut()
+                .ok_or_else(|| "Error while converting to mut reference".into())
+        },
+        Err(e) => Err(e),
     }
-
-    STORE.with(|cell| {
-        let ptr = cell.get() as *mut Option<T>;
-        let option_ref = unsafe { ptr.as_mut() }.expect("invalid usage");
-
-        if option_ref.is_none() {
-            *option_ref = self.value.take();
-        }
-
-        Poll::Pending
-    })
 }
-
-// https://github.com/tokio-rs/async-stream/blob/3bad70289ea0e2872ae0031c24ab7e19b5ea6b98/async-stream/src/yielder.rs#L63
