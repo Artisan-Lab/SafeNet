@@ -3,7 +3,7 @@
 low 表示是完全的直接使用完全没用
 high 只要有点用就可以给
 
-# Unsafe APIs that do not need machine learning: 
+### Unsafe APIs that do not need machine learning: 
 | Pattern Name | API | Replacement Strategy | Pattern ID: Discription | Case | 
 |---------|---------|---------|---------|---------|
 | unchecked | \*unchecked\* | all unchecked APIs can be replaced with a safe API by removing unchecked | ignore boundary check | |
@@ -17,6 +17,7 @@ high 只要有点用就可以给
 | - | byte_offset_from? |
 
 
+### Unsafe APIs that need machine learning: 
 | ID | API | Pattern ID: Discription | Pattern Value | Case | 
 |---------|---------|---------|---------|---------|
 | as_uninit_slice |
