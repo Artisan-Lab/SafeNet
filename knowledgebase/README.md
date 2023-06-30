@@ -7,7 +7,7 @@ high 只要有点用就可以给
 | Pattern Name | API | Replacement Strategy | Pattern ID: Discription | Case | 
 |---------|---------|---------|---------|---------|
 | unchecked | \*unchecked\* | all unchecked APIs can be replaced with a safe API by removing unchecked | ignore boundary check | |
-| - | get_unchecked | get ｜ 
+| - | get_unchecked | get | 
 | - | ...over 20... |
 | wrapping | add |  wrapping_add | ignore arithmatic overflow | |
 | - | sub | wrapping_sub | | 1-ptr-simple-unsafe-low.rs <br> 2-ptr-mut-unsafe-low.rs| |
