@@ -3,7 +3,8 @@
     Replaceable: No
     Application: drop the content pointed by the pointer.
 */
-#![allow(unused)]
+
+//#![allow(unused)]
 
 fn drop(p:*mut i32) {
     unsafe { Box::from_raw(p); }
