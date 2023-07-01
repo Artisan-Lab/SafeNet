@@ -1,3 +1,6 @@
+/*
+    From: https://github.com/polachok/duktape/blob/598117bfdbdae5e67fe1d61f6adaa236bb1982fd/src/value.rs#L132
+*/
 fn peek_rc<T>(ctx: &mut Context, idx: i32, copy: bool) -> Option<Rc<T>> {
     ctx.get_object(idx);
 
@@ -23,6 +26,3 @@ fn peek_rc<T>(ctx: &mut Context, idx: i32, copy: bool) -> Option<Rc<T>> {
     Some(rc)
 }
 
-/*
-https://github.com/polachok/duktape/blob/598117bfdbdae5e67fe1d61f6adaa236bb1982fd/src/value.rs#L132
-*/

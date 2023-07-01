@@ -15,23 +15,15 @@
 | - | offset | wrapping_offset | |
 | - | byte_offset | wrapping_byte_offset |
 
-### Unsafe APIs that cannot be replaced: 
-
-| API | Justification |
-|---------|---------|
-| read_volatile | we currently don't know other safe APIs that enforce the volatile feature |
-| ptr::read_volatile | same as read_volatile |
-
 ### Unsafe APIs that need machine learning: 
 
 | ID | API | Pattern ID: Discription | Replaceable? | Practical? | Case | 
 |---------|---------|---------|---------|---------|---------|
-| 1 | Arc::decrement_strong_count | 1: 太简单 | LOW  |1-arc-count-simple-unsafe.rs | 
 | 2* | Arc::from_raw | 1: Straightforward: replaceable with Arc::new | Y | M | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
 | - | Arc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
 | - | Arc::from_raw | 3: Create Arc\<B\> from A: replaceable, Convert A to B first | Y | Y | 3-coersion-unsafe.rs | 
 | - | Arc::from_raw | 4: &self parameter: depends on Copy or Clone | M | Y | 4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
-| 3 | Arc::increment_strong_count | 1: 太简单 同decrement | LOW  |1-arc-count-simple-unsafe.rs | 
+| 3 | | 1: 太简单 同decrement | LOW  |1-arc-count-simple-unsafe.rs | 
 | 4 | Box::from_raw | 1: 把裸指针装到一个box里进行drop，目的是drop指针指向的东西 无法用safe替换  | **HIGH**   |1-drop-unsafe-2-high.rs <br> 1-drop-unsafe-high.rs | 
 | - | Box::from_raw | 2:为了用fromraw而用,先alloc再把位置赋值，转成box传出 case里其实是两个一模一样的代码 | LOW  |2-alloc-unsafe-2-low.rs <br> 2-alloc-unsafe-low.rs| 
 | - | Box::from_raw | 3: 为了用fromraw而用,用into_raw定义一个裸指针,再转回去 | LOW  |3-simple-unsafe-low.rs <br>3-string-unsafe-2-low.rs| 
@@ -41,7 +33,6 @@
 | - | CStr::from_ptr | 2: 没看懂意思，先给high | **HIGH**  |2-cstrfromptrconst-simple-unsafe-high.rs| 
 | 7 | CString::from_raw | 1: 没看懂意思，先给high | **HIGH**   |1-CStringfromraw-simple-unsafe-high.rs| 
 | 8 | MaybeUninit::array_assume_init| 1:和assumeinit中pattern2出现的实际相同 | **HIGH**   |1-array-simple-unsafe-high.rs|
-| *9 | Rc::decrement_strong_count | 1:Raw ptr parameter: irreplaceable | N | Y | 1-rawptr-unsafe.rs, 1-rawptr-unsafe.rs | 
 | 10* | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | M | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
 | - | Rc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
 | - | Rc::from_raw | 3: Create Rc\<B\> from A: replaceable, Convert A to B first | Y | Y | 3-coersion-unsafe.rs | 
@@ -113,3 +104,14 @@
 | - |  write_bytes | 
 | - |  write_volatile | 
 | - |  write_unaligned |
+
+### Unsafe APIs that can hardly be replaced: 
+
+| Pattern Name | API | Justification |
+|---------|---------|---------|
+| volatile | read_volatile | we currently don't know other safe APIs that enforce the volatile feature |
+| - | ptr::read_volatile | same as read_volatile |
+| Rc count | Rc::decrement_strong_count | |
+| - | Rc::increment_strong_count | |
+| - | Arc::decrement_strong_count | |
+| - | Arc::increment_strong_count | |
