@@ -6,7 +6,7 @@ struct MyStruct {
 
 fn main() {
 
-    let mut rc = Rc::new( MyStruct { value: 42 });
+    let mut rc = Rc::new( Box::new(MyStruct { value: 42 }) );
     (*Rc::get_mut(&mut rc).unwrap()).value = 24;
     assert_eq!((*rc).value, 24);
 }
