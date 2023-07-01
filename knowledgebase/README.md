@@ -74,11 +74,12 @@
 | - | ptr::copy |
 | - | ptr::copy_nonoverlapping |
 | - | ptr::drop_in_place |
+| 32 | read | 1: 基础使用,其中 所有权与这个例子无关，目的是指针位置读取，所以这两个是同一个pattern | low | 1-ptr-ownership-unsafe-low.rs <br> 1-ptr-simple-unsafe-low.rs | 
 | - | ptr::read | 2: 通过read来进行变量交换，memswap是一个避开所有权冲突的使用方法，所以存在何时使用memswap的问题，这个一定是high | **HIGH** | 2-ptr-read2swap-unsafe-high.rs |
 | - | ptr::read_unaligned |
 | - | ptr::read_volatile |
-| - | ptr::replace |
-| - | ptr::swap |
+| - | ptr::replace | 1: 基础使用 | low | 1-ptr-simple-unsafe-low.rs |
+| - | ptr::swap | 1: swap是一个有复杂语义的api，肯定是high，这里三个case虽然调用api的不同,但是用法是完全一样的，在修改方法上没有不同 | **HIGH**  | 1-ptr-nonoverlapping-unsafe-2-high.rs <br> 1-ptr-nonoverlapping-unsafe-high.rs <br> 1-ptr-overlapping-unsafe-high.rs| 
 | - | ptr::swap_nonoverlapping |
 | - | ptr::write | 1: 基础使用 | LOW  | 1-ptr-simple-unsafe.rs |
 | - | ptr::write | 2: swap | **HIGH**  | 2-ptr-write2swap-unsafe-high.rs |
@@ -88,14 +89,11 @@
 | 29 | Rc::decrement_strong_count| 1: 基础使用 | low | 1-rc-count-simple-unsafe-low.rs |
 | 30 | Rc::from_raw | 1: 与boxfromraw类似，本例与boxfromraw pattern3一致 | low | 1-rcfromraw-simple-unsafe-low.rs |
 | 31 | Rc::increment_strong_count | 1:基础使用 | low | 1-rc+count-simple-unsafe-low.rs |
-| 32 | read | 1: 基础使用,其中 所有权与这个例子无关，目的是指针位置读取，所以这两个是同一个pattern | low | 1-ptr-ownership-unsafe-low.rs <br> 1-ptr-simple-unsafe-low.rs | 
-| 33 | replace | 1: 基础使用 | low | 1-ptr-simple-unsafe-low.rs |
 | 34 | set_len | 1: 用setlen创建一个vec给ffi用，无法替换 | **HIGH** | 1-vec-ffi-unsafe-high.rs |
 | -  |set_len | 2: 基础使用，但是这个有使用目的，vec的capacity是确定的，但是vec是翻倍增长的，这个例子用来缩掉vec不用的长度，resize | **HIGH** | 2-vec-shorten-unsafe-high.rs |
 | 35 | slice::from_ptr_range | 1: 返回两个指针夹着的slice 看std中的描述应该是无法替换,这个case确实只是调了一下，但是这个api确实都可以通过指指针一位一位读来解决，标记为high | **HIGH** | 1-slicefromrange-mut-unsafe-high.rs <br> 1-slicefromrange-simple-unsafe-low.rs|
 | - | split_at_mut |
 | 36 | sub_ptr | 1: 基础调用，两个case没区别 | LOW  | 1-ptr-mut-unsafe-low.rs <br> 1-ptr-simple-unsafe-low.rs| 
-| 37 | swap | 1: swap是一个有复杂语义的api，肯定是high，这里三个case虽然调用api的不同,但是用法是完全一样的，在修改方法上没有不同 | **HIGH**  | 1-ptr-nonoverlapping-unsafe-2-high.rs <br> 1-ptr-nonoverlapping-unsafe-high.rs <br> 1-ptr-overlapping-unsafe-high.rs| 
 | - | offset_from | 1: misused 与普通版其实没区别，都是基础使用 | low | 1-misused-ptr-mut-unsafe-low.rs <br> 1-ptr-mut-unsafe-low.rs <br>1-ptr-simple-unsafe-low.rs |
 
 
