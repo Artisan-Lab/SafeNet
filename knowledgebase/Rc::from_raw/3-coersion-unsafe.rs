@@ -1,5 +1,5 @@
 /*
-  Repaceable: no
+  Repaceable: yes.Create Rc<B> from A => Convert A to B first 
 */
 
 //#![allow(unused)]
