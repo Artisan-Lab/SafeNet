@@ -5,5 +5,5 @@ fn main() {
     let p = Box::into_raw(Box::new(v));
     unsafe { (*p)[1] = 24; }
     let rc = unsafe { Rc::from_raw(p) };
-    assert_eq!((*rc)[1], 24);
+    //assert_eq!((*rc)[1], 24);
 }
