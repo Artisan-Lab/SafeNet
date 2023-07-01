@@ -41,6 +41,7 @@
 |  | Rc::decrement_strong_count | 1: 太简单 | LOW  |1-arc-count-simple-unsafe.rs | 
 | * | Rc::from_raw | Replaceable with Rc::new | Y | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
 | - | Rc::from_raw | Irreplaceable with Rc::new because of the raw ptr parameter | Y | 2-rawptr-unsafe.rs | 
+| - | Rc::from_raw | Replaceable: Create Rc<B> from A => Convert A to B first | Y | 3-coersion-unsafe.rs | 
 | 7 | Rc::increment_strong_count | 1: 太简单 同decrement | LOW  |1-arc-count-simple-unsafe.rs | 
 | 43 | String::from_raw_parts | 1: from_raw_parts 的基本解决方案，从指针处按位读，读到想要的位置，如果这个指针是safe的，那就能safe。这三个case本质是一样，只是分别是iteminc按位指针处+1，fromvec按位转换类型，1-fromraw-unsafe-high.rs 是一个无目的例子，建议去掉 | **HIGH**  | 1-fromraw-unsafe-high.rs <br> 1-fromvec-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | -  | String::from_raw_parts | 2: 这个本质上是和 pattern1相同，属于类型转换，但是因为String有自己的to_string方法非常方便，所以改法不同了 | **HIGH**  | 2-fromstr-unsafe-high.rs |
