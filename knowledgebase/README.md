@@ -24,8 +24,8 @@
 
 ### Unsafe APIs that need machine learning: 
 
-| ID | API | Pattern ID: Discription | Replaceable? | Useful? | Case | 
-|---------|---------|---------|---------|---------|
+| ID | API | Pattern ID: Discription | Replaceable? | Practical? | Case | 
+|---------|---------|---------|---------|---------|---------|
 | 1 | Arc::decrement_strong_count | 1: 太简单 | LOW  |1-arc-count-simple-unsafe.rs | 
 | *2 | Arc::from_raw | 1: Straightforward: replaceable with Arc::new | Y | M | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
 | - | Arc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
@@ -42,9 +42,10 @@
 | 21 | CString::from_raw | 1: 没看懂意思，先给high | **HIGH**   |1-CStringfromraw-simple-unsafe-high.rs| 
 | 24 | MaybeUninit::array_assume_init| 1:和assumeinit中pattern2出现的实际相同 | **HIGH**   |1-array-simple-unsafe-high.rs|
 |  | Rc::decrement_strong_count | 1: 太简单 | LOW  |1-arc-count-simple-unsafe.rs | 
-| * | Rc::from_raw | Replaceable with Rc::new | Y | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
-| - | Rc::from_raw | Irreplaceable with Rc::new because of the raw ptr parameter | Y | 2-rawptr-unsafe.rs | 
-| - | Rc::from_raw | Replaceable: Create Rc\<B\> from A => Convert A to B first | Y | 3-coersion-unsafe.rs | 
+| *2 | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | M | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
+| - | Rc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
+| - | Rc::from_raw | 3: Create Rc\<B\> from A: replaceable, Convert A to B first | Y | Y | 3-coersion-unsafe.rs | 
+| - | Rc::from_raw | 4: &self parameter: depends on Copy or Clone | M | Y | 4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
 | 7 | Rc::increment_strong_count | 1: 太简单 同decrement | LOW  |1-arc-count-simple-unsafe.rs | 
 | 43 | String::from_raw_parts | 1: from_raw_parts 的基本解决方案，从指针处按位读，读到想要的位置，如果这个指针是safe的，那就能safe。这三个case本质是一样，只是分别是iteminc按位指针处+1，fromvec按位转换类型，1-fromraw-unsafe-high.rs 是一个无目的例子，建议去掉 | **HIGH**  | 1-fromraw-unsafe-high.rs <br> 1-fromvec-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | -  | String::from_raw_parts | 2: 这个本质上是和 pattern1相同，属于类型转换，但是因为String有自己的to_string方法非常方便，所以改法不同了 | **HIGH**  | 2-fromstr-unsafe-high.rs |
