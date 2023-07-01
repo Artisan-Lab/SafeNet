@@ -23,10 +23,9 @@
 | - | Arc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
 | - | Arc::from_raw | 3: Create Arc\<B\> from A: replaceable, Convert A to B first | Y | Y | 3-coersion-unsafe.rs | 
 | - | Arc::from_raw | 4: &self parameter: depends on Copy or Clone | M | Y | 4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
-| 2* | Box::from_raw | 1: Raw ptr parameter: drop raw pointers, cannot be replaced | N | Y  | 1-dropraw-unsafe.rs | 
-| - | Box::from_raw | 2: Default alloc | Y | M |2-alloc-unsafe.rs | 
-| 3 | Box::from_raw_in | 1: 与Box::from_raw pattern2 一样 | LOW  |1-simple-unsafe-low.rs| 
-| - | byte_offset_from? |
+| 2* | Box::from_raw | 1: Raw ptr parameter: drop raw pointers | N | Y  | 1-dropraw-unsafe.rs | 
+| - | Box::from_raw | 2: Default alloc | Y | Y |2-alloc-unsafe.rs | 
+| 3 | Box::from_raw_in | 1: create a Box with a specific allocator | Y | Y | 1-simple-unsafe.rs| 
 | 4 | CStr::from_ptr | 1: ffi 只单纯调用了一下api | LOW  |1-cstrfromptr-simple-unsafe-low.rs| 
 | - | CStr::from_ptr | 2: 没看懂意思，先给high | **HIGH**  |2-cstrfromptrconst-simple-unsafe-high.rs| 
 | 5 | CString::from_raw | 1: 没看懂意思，先给high | **HIGH**   |1-CStringfromraw-simple-unsafe-high.rs| 
@@ -58,6 +57,7 @@
 | 20 | assume_init_mut | 1: 与assumeinit类似 这些实际只有一种 | **HIGH**   |1-assumeinitmut-simple-unsafe-high.rs <br> 1-misused-assumeinitmut-readuninit-unsafe-high.rs <br>  1-misused-assumeinitmut-uninit-unsafe-high.rs <br> 1-misused-assumeinitmut-uninitfield-unsafe-high.rs| 
 | 21 | assume_init_read | 1: 与assumeinit类似，这些其实只有一种 | **HIGH**   |1-misused-assumeinitmut-read.rs <br> uninit-unsafe-high.rs <br>  1-assumeinitreadnone-simple-unsafe-high.rs <br>  1-misused-assumeinitread-simple-unsafe-high.rs| 
 | 22 | assume_init_ref | 1: 后面两个是误用但是从unsafe转safe角度上是一样的 | **HIGH**   |1-assumeinitref-simple-unsafe.rs <br> 1-misused-assumeinitref-simple-unsafe.rs <br> 1-misused-assumeinitrefcell-simple-unsafe.rs  | 
+| - | byte_offset_from? |
 | 23 | dealloc| 1: 存在safe版本, 但是在case中表现的其实是 我分配一个东西再释放掉，太简单，但是不是完全没意义 | **HIGH**   |1-dealloc-simple-unsafe-high.rs <br> 1-deallocfromzero-simple-unsafe-high.rs|
 | 24 | drop_in_place| 1: 与dealloc 类似 ，用先分配再释放的方式构造的问题，换了个写法 | **HIGH**   |1-ptr-rc-unsafe-high.rs |
 | 25 | mem::align_of_val_raw | 1: 纯粹调用 | LOW   |1-alignof-simple-unsafe-low.rs|
