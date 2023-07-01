@@ -24,7 +24,8 @@
 | - | Arc::from_raw | 3: Create Arc\<B\> from A: replaceable, Convert A to B first | Y | Y | 3-coersion-unsafe.rs | 
 | - | Arc::from_raw | 4: &self parameter: depends on Copy or Clone | M | Y | 4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
 | 2* | Box::from_raw | 1: Raw ptr parameter: drop raw pointers | N | Y  | 1-dropraw-unsafe.rs | 
-| - | Box::from_raw | 2: Alloc layout<T>: replace with Box::new(T)  | M | Y | 2-alloci32-unsafe.rs | 
+| - | Box::from_raw | 2: Alloc layout<T>: replace with Box::new(T)  | M | Y | 2-alloci32-unsafe.rs |
+| - | Box::from_raw | 3: drop(&self) | M | Y | 3-dropself-unsafe.rs |
 | 3 | Box::from_raw_in | 1: create a Box with a specific allocator | Y | Y | 1-simple-unsafe.rs| 
 | 4 | CStr::from_ptr | 1: ffi 只单纯调用了一下api | LOW  | 1-cstrfromptr-simple-unsafe-low.rs | 
 | - | CStr::from_ptr | 2: 没看懂意思，先给high | **HIGH**  |2-cstrfromptrconst-simple-unsafe-high.rs| 
