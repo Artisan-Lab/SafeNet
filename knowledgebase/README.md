@@ -26,9 +26,11 @@
 
 | ID | API | Pattern ID: Discription | Pattern Value | Case | 
 |---------|---------|---------|---------|---------|
-| 5 | Arc::decrement_strong_count | 1: 太简单 | LOW  |1-arc-count-simple-unsafe.rs | 
-| 6 | Arc::from_raw | 1: 太简单 从裸指针构建一个ARC类型指针 | LOW  |1-arc-count-simple-unsafe.rs | 
-| 7 | Arc::increment_strong_count | 1: 太简单 同decrement | LOW  |1-arc-count-simple-unsafe.rs | 
+| 1 | Arc::decrement_strong_count | 1: 太简单 | LOW  |1-arc-count-simple-unsafe.rs | 
+| *2 | Arc::from_raw | Replaceable with Arc::new | Y | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
+| - | Arc::from_raw | Irreplaceable with Arc::new because of the raw ptr parameter | Y | 2-rawptr-unsafe.rs | 
+| - | Arc::from_raw | Replaceable: Create Arc\<B\> from A => Convert A to B first | Y | 3-coersion-unsafe.rs | 
+| 3 | Arc::increment_strong_count | 1: 太简单 同decrement | LOW  |1-arc-count-simple-unsafe.rs | 
 | 18 | Box::from_raw | 1: 把裸指针装到一个box里进行drop，目的是drop指针指向的东西 无法用safe替换  | **HIGH**   |1-drop-unsafe-2-high.rs <br> 1-drop-unsafe-high.rs | 
 | - | Box::from_raw | 2:为了用fromraw而用,先alloc再把位置赋值，转成box传出 case里其实是两个一模一样的代码 | LOW  |2-alloc-unsafe-2-low.rs <br> 2-alloc-unsafe-low.rs| 
 | - | Box::from_raw | 3: 为了用fromraw而用,用into_raw定义一个裸指针,再转回去 | LOW  |3-simple-unsafe-low.rs <br>3-string-unsafe-2-low.rs| 
