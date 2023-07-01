@@ -27,26 +27,26 @@
 | ID | API | Pattern ID: Discription | Replaceable? | Practical? | Case | 
 |---------|---------|---------|---------|---------|---------|
 | 1 | Arc::decrement_strong_count | 1: 太简单 | LOW  |1-arc-count-simple-unsafe.rs | 
-| *2 | Arc::from_raw | 1: Straightforward: replaceable with Arc::new | Y | M | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
+| 2* | Arc::from_raw | 1: Straightforward: replaceable with Arc::new | Y | M | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
 | - | Arc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
 | - | Arc::from_raw | 3: Create Arc\<B\> from A: replaceable, Convert A to B first | Y | Y | 3-coersion-unsafe.rs | 
 | - | Arc::from_raw | 4: &self parameter: depends on Copy or Clone | M | Y | 4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
 | 3 | Arc::increment_strong_count | 1: 太简单 同decrement | LOW  |1-arc-count-simple-unsafe.rs | 
-| 18 | Box::from_raw | 1: 把裸指针装到一个box里进行drop，目的是drop指针指向的东西 无法用safe替换  | **HIGH**   |1-drop-unsafe-2-high.rs <br> 1-drop-unsafe-high.rs | 
+| 4 | Box::from_raw | 1: 把裸指针装到一个box里进行drop，目的是drop指针指向的东西 无法用safe替换  | **HIGH**   |1-drop-unsafe-2-high.rs <br> 1-drop-unsafe-high.rs | 
 | - | Box::from_raw | 2:为了用fromraw而用,先alloc再把位置赋值，转成box传出 case里其实是两个一模一样的代码 | LOW  |2-alloc-unsafe-2-low.rs <br> 2-alloc-unsafe-low.rs| 
 | - | Box::from_raw | 3: 为了用fromraw而用,用into_raw定义一个裸指针,再转回去 | LOW  |3-simple-unsafe-low.rs <br>3-string-unsafe-2-low.rs| 
-| 19 | Box::from_raw_in | 1: 与Box::from_raw pattern2 一样 | LOW  |1-simple-unsafe-low.rs| 
+| 5 | Box::from_raw_in | 1: 与Box::from_raw pattern2 一样 | LOW  |1-simple-unsafe-low.rs| 
 | - | byte_offset_from? |
-| 20 | CStr::from_ptr | 1: ffi 只单纯调用了一下api | LOW  |1-cstrfromptr-simple-unsafe-low.rs| 
+| 6 | CStr::from_ptr | 1: ffi 只单纯调用了一下api | LOW  |1-cstrfromptr-simple-unsafe-low.rs| 
 | - | CStr::from_ptr | 2: 没看懂意思，先给high | **HIGH**  |2-cstrfromptrconst-simple-unsafe-high.rs| 
-| 21 | CString::from_raw | 1: 没看懂意思，先给high | **HIGH**   |1-CStringfromraw-simple-unsafe-high.rs| 
-| 24 | MaybeUninit::array_assume_init| 1:和assumeinit中pattern2出现的实际相同 | **HIGH**   |1-array-simple-unsafe-high.rs|
-|  | Rc::decrement_strong_count | 1: 太简单 | LOW  |1-arc-count-simple-unsafe.rs | 
-| *2 | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | M | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
+| 7 | CString::from_raw | 1: 没看懂意思，先给high | **HIGH**   |1-CStringfromraw-simple-unsafe-high.rs| 
+| 8 | MaybeUninit::array_assume_init| 1:和assumeinit中pattern2出现的实际相同 | **HIGH**   |1-array-simple-unsafe-high.rs|
+| *9 | Rc::decrement_strong_count | 1:Raw ptr parameter: irreplaceable | N | Y | 1-rawptr-unsafe.rs, 1-rawptr-unsafe.rs | 
+| 10* | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | M | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
 | - | Rc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
 | - | Rc::from_raw | 3: Create Rc\<B\> from A: replaceable, Convert A to B first | Y | Y | 3-coersion-unsafe.rs | 
 | - | Rc::from_raw | 4: &self parameter: depends on Copy or Clone | M | Y | 4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
-| 7 | Rc::increment_strong_count | 1: 太简单 同decrement | LOW  |1-arc-count-simple-unsafe.rs | 
+| 11 | Rc::increment_strong_count | 1: 太简单 同decrement | LOW  |1-arc-count-simple-unsafe.rs | 
 | 43 | String::from_raw_parts | 1: from_raw_parts 的基本解决方案，从指针处按位读，读到想要的位置，如果这个指针是safe的，那就能safe。这三个case本质是一样，只是分别是iteminc按位指针处+1，fromvec按位转换类型，1-fromraw-unsafe-high.rs 是一个无目的例子，建议去掉 | **HIGH**  | 1-fromraw-unsafe-high.rs <br> 1-fromvec-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | -  | String::from_raw_parts | 2: 这个本质上是和 pattern1相同，属于类型转换，但是因为String有自己的to_string方法非常方便，所以改法不同了 | **HIGH**  | 2-fromstr-unsafe-high.rs |
 | -  | String::from_raw_parts | 3: 怕直接用string消耗所有权，所以先用个ptr，用from_raw_parts单纯来生产个ptr，恐怕没有人这么做，价值小，因为是更复杂的用法实现了一个简单的功能 与transmute的as价值差不多 | **HIGH**  | 3-ownership-unsafe.rs |
