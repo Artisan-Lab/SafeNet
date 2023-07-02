@@ -1,10 +1,11 @@
-#![allow(unused)]
-use std::mem::MaybeUninit;
+//#![allow(unused)]
+//use std::mem::MaybeUninit;
 
+/*
 unsafe fn make_vec(out: *mut Vec<i32>) {
     out.write(vec![1, 2, 3]);
 }
-    
+*/    
 fn main() {
     let mut v:MaybeUninit<Vec<i32>> = MaybeUninit::uninit();
     unsafe { 
