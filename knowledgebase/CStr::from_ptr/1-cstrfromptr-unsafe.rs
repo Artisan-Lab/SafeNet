@@ -6,7 +6,6 @@ extern "C" {
 }
 
 fn main() {
-    unsafe {
-        let slice = CStr::from_ptr(my_string());
-    }
+    let raw = unsafe { my_string() };
+    let cstr = unsafe { CStr::from_ptr(raw) };
 }
