@@ -38,6 +38,13 @@
 | 4* | CStr::from_ptr | 1: From an FFI returned raw ptr | N | Y | 1-cstrfromffi-unsafe.rs | 
 | - | CStr::from_ptr | 2: Create a new CStr | Y | Y | 2-createcstr-unsafe.rs| 
 | - | CStr::from_ptr | 3: Raw ptr parameter | N | Y | 3-cstrfromptr-unsafe.rs | 
+| 5(new) | CString::from_raw | 1: Raw ptr parameter | N | Y | new1-fromffi-unsafe.rs,new1-fromraw-unsafe.rs|
+| -  | CString::from_raw | 2: Returned raw ptr | N | Y |  |
+| -  | CString::from_raw | 3: to other Rust objects | Y | Y |  |
+| -  | CString::from_raw | 4: Ownership issue: Retake the ownership after FFI | N | Y | new4-retakeffi-unsafe.rs |
+| -  | CString::from_raw | 5: Modify CString contents | Y | Y | new5-modify-unsafe.rs |
+| -  | CString::from_raw | 6: Function parameters: raw | Y | Y |  |
+| -  | CString::from_raw | 7: Function parameters: self | M | Y |  |
 | 5* | CString::from_raw | 1: Retake the ownership after FFI | N | Y | 1-retakeffi-unsafe.rs | 
 | - | CString::from_raw | 2: Modify through raw ptr, use as_bytes instead | Y | Y | 2-modify-unsafe.rs| 
 | - | CString::from_raw | 3: Raw ptr parameter (drop the content) | N | Y | 3-fromraw-unsafe.rs| 
