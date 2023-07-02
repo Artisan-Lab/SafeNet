@@ -33,6 +33,7 @@
 | - | CStr::from_ptr | 3: Raw ptr parameter | N | Y | 3-cstrfromptr-unsafe.rs | 
 | 5 | CString::from_raw | 1: Retake the ownership after FFI | N | Y | 1-retakeffi-unsafe.rs | 
 | - | CString::from_raw | 2: Modify through raw ptr, use as_bytes instead | Y | Y | 2-modify-unsafe.rs| 
+| - | CString::from_raw | 3: Raw ptr parameter (drop the content) | N | Y | 3-fromraw-unsafe.rs| 
 | 6 | MaybeUninit::array_assume_init| 1:和assumeinit中pattern2出现的实际相同 | **HIGH**   |1-array-simple-unsafe-high.rs|
 | 7* | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | M | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
 | - | Rc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
