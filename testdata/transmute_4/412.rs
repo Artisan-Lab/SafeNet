@@ -1,8 +1,6 @@
-pub fn set_props<T>(&mut self, props: T) {
-    let boxed = Box::into_raw(Box::new(props));
-    let data = unsafe { ::std::mem::transmute(boxed) };
-    self.props = Some((self.type_id, data));
+pub fn cmov_i32(condition: bool, src: &i32, dest: &mut i32) {
+    let src_transmuted = unsafe { core::mem::transmute::<&i32, &u32>(src) };
+    let dest_transmuted = unsafe { core::mem::transmute::<&mut i32, &mut u32>(dest) };
+
+    cmov_u32(condition, src_transmuted, dest_transmuted);
 }
-/*
-https://github.com/VISCHub/yew/blob/02f476d008280033cc7c0355f15754314394e00a/src/virtual_dom/vcomp.rs#L73
-*/

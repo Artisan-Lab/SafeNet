@@ -1,9 +1,9 @@
-pub extern "C" fn rs_ntp_state_new(_orig_state: *mut std::os::raw::c_void, _orig_proto: AppProto) -> *mut std::os::raw::c_void {
-    let state = NTPState::new();
-    let boxed = Box::new(state);
-    return unsafe{std::mem::transmute(boxed)};
-}
+pub fn cmov_i64(condition: bool, src: &i64, dest: &mut i64) {
+    let src_transmuted = unsafe { core::mem::transmute::<&i64, &u64>(src) };
+    let dest_transmuted = unsafe { core::mem::transmute::<&mut i64, &mut u64>(dest) };
 
+    cmov_u64(condition, src_transmuted, dest_transmuted);
+}
 /*
-https://github.com/thus/suricata/blob/d00b755b647a69eb4d4a10adb57be45fd4d14c7d/rust/src/ntp/ntp.rs#L181
+https://github.com/frankfanslc/mc-oblivious/blob/456bf3612d7455520c13520d0ffd3916547a88a4/aligned-cmov/src/cmov_impl_asm.rs#L76
 */
