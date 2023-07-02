@@ -23,6 +23,13 @@
 | - | Arc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
 | - | Arc::from_raw | 3: Create Arc\<B\> from A: replaceable, Convert A to B first | Y | Y | 3-coersion-unsafe.rs | 
 | - | Arc::from_raw | 4: &self parameter: depends on Copy or Clone | M | Y | 4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
+| 2(new) | Box::from_raw | 1: Raw ptr parameter | N | Y | new1-fromraw-unsafe.rs|
+| -  | Box::from_raw | 2: Returned raw ptr | N | Y | new2-dropraw-unsafe.rs |
+| -  | Box::from_raw | 3: to other Rust objects | Y | Y | new3-tostr-unsafe.rs,new3-tovec-unsafe.rs |
+| -  | Box::from_raw | 4: Ownership issue: use as_ptr instead | Y | Y | new4-coersion-unsafe.rs,new4-copycoersion-unsafe.rs |
+| -  | Box::from_raw | 5: Modify Box contents | Y | Y | new5-modify-unsafe.rs |
+| -  | Box::from_raw | 6: Function parameters: raw | Y | Y | new6-funparraw-unsafe.rs |
+| -  | Box::from_raw | 7: Function parameters: self | M | Y | new7-dropself-unsafe.rs |
 | 2* | Box::from_raw | 1: Raw ptr parameter: drop raw pointers | N | Y  | 1-dropraw-unsafe.rs | 
 | - | Box::from_raw | 2: Alloc layout<T>: replace with Box::new(T)  | M | Y | 2-alloci32-unsafe.rs |
 | - | Box::from_raw | 3: drop(&self) | M | Y | 3-dropself-unsafe.rs |
@@ -49,8 +56,6 @@
 | -  | Vec::from_raw_parts | 3: from other Rust objects | Y | Y | 3-frommem-unsafe.rs |
 | -  | Vec::from_raw_parts | 4: Ownership issue: use as_ptr instead | Y | Y | 4-ownership-unsafe.rs |
 | -  | Vec::from_raw_parts | 5: Modify Vec contents | Y | Y | 5-iteminc-unsafe.rs|
-
-| 9 | Vec::from_raw_parts | 1: 与String::from_raw_parts问题相同，这些case改法只有一个就是按位读，这里一个case 1-frommem-unsafe-high.rs，看似多，但是其实就是一堆无效操作，就存了一个数。 这里的1-fromraw-unsafe-high.rs也是无目的一个例子，建议去掉| **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-fromraw-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | - | Vec::from_raw_parts_in | 2: 这个api和上面的Vec::from_raw_parts问题一模一样 | **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | 10 | Weak::from_raw | 1: 写的多，但是跟Boxfromraw pattern2 是一样的 | LOW  | 1-weakfromraw-simple-unsafe-low.rs |
 | 11* | assume_init | 1: Box/Rc/Arc simple use,replaceable, init(new) | Y | N  | 1-box-simple-unsafe-low.rs,1-box-slice-unsafe-lowrs ,1-rc-simple-unsafe-low.rs, 1-rc-slice-unsafe-low.rs,1-arc-simple-unsafe-low.rs | 
