@@ -13,7 +13,6 @@ fn main() {
         elem.write(vec![42]);
     }
 
-    let data = {unsafe { mem::transmute::<_, [Vec<u32>; 1000]>(data) }
+    let data = {unsafe { mem::transmute::<_, [Vec<u32>; 1000]>(data) }};
     assert_eq!(&data[0], &[42]);
-    };
 }
