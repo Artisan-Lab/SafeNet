@@ -65,15 +65,15 @@
 | -  | Vec::from_raw_parts | 5: Modify Vec contents | Y | Y | 5-iteminc-unsafe.rs|
 | - | Vec::from_raw_parts_in | 2: 这个api和上面的Vec::from_raw_parts问题一模一样 | **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | 10 | Weak::from_raw | 1: 写的多，但是跟Boxfromraw pattern2 是一样的 | LOW  | 1-weakfromraw-simple-unsafe-low.rs |
-| 11* | assume_init | 1: Box/Rc/Arc simple use,replaceable, init(new) | Y | N  | 1-box-simple-unsafe-low.rs,1-box-slice-unsafe-lowrs ,1-rc-simple-unsafe-low.rs, 1-rc-slice-unsafe-low.rs,1-arc-simple-unsafe-low.rs | 
-| - | assume_init | 2: maybeuninit  | M | Y | 2-maybeuninit-refi32-unsafe-high.rs,2-maybeuninit-struct-unsafe-high.rs,2-maybeuninit-vec-unsafe-high.rs,2-maybeuninit-zeroed-unsafe-high.rs |
-| - | assume_init | 3:\[MaybeUninit\]+ Other unsafe APIs | M | Y | 3-array-maybeuninitstring-unsafe-high.rs,3-array-maybeuninitvec-unsafe-high.rs |
-| 12* | transmute | 1:misuse,replace with as | Y | Y  | 1-i32ptrusize-unsafe.rs,1-void-unsafe.rs, 1-i2u32-unsafe.rs，| 
-| - | transmute | 2: misuse, replace with safe APIs:from_le_bytes...  | Y | Y | 2-bytes2u32-unsafe.rs, 2-str2slice-unsafe.rs  |
-| - | transmute | 3: convert ContainerA<P> to ContainerA<Q> or ContainerA to ContainerB | Y | Y |  3-vecoption-unsafe-high-2.rs, 3-vecstring-unsafe.rs|
-| - | transmute | 4: convert raw to ref  | N | Y | 4-raw2own-unsafe.rs |
-| - | transmute | 5: modify lifetimes | M | Y | 5-lifetimeextend-unsafe.rs，5-lifetimeshrink-unsafe.rs |
-| - | transmute | 6: Maybeuninit to init | N | Y | 6-maybeuninit-unsafe.rs |
+| 11* | assume_init | 1: Create uninit and then init | Y | Y  | 1-box-unsafe.rs, 1-rc-unsafe.rs, 1-arc-unsafe-low.rs, ... | 
+| - | assume_init | 2: MaybeUninit parameter  | N | Y |  |
+| - | assume_init | 3: to be init by other APIs | M | Y |  |
+| 12* | mem::transmute | 1:misuse,replace with as | Y | Y  | 1-i32ptrusize-unsafe.rs,1-void-unsafe.rs, 1-i2u32-unsafe.rs，| 
+| - | mem::transmute | 2: misuse, replace with safe APIs:from_le_bytes...  | Y | Y | 2-bytes2u32-unsafe.rs, 2-str2slice-unsafe.rs  |
+| - | mem::transmute | 3: convert ContainerA<P> to ContainerA<Q> or ContainerA to ContainerB | Y | Y |  3-vecoption-unsafe-high-2.rs, 3-vecstring-unsafe.rs|
+| - | mem::transmute | 4: convert raw to ref  | N | Y | 4-raw2own-unsafe.rs |
+| - | mem::transmute | 5: modify lifetimes | M | Y | 5-lifetimeextend-unsafe.rs，5-lifetimeshrink-unsafe.rs |
+| - | mem::transmute | 6: Maybeuninit to init | N | Y | 6-maybeuninit-unsafe.rs |
 | 13* | swap | 1:use slice | Y | Y  | 1-ptr-nonoverlapping-unsafe-high-1.rs,1-ptr-nonoverlapping-unsafe-high-2.rs,1-ptr-overlapping-unsafe-high-3.rs | 
 | - | swap | 2: misuse,mem::swap | Y | Y | 2-mem-misuse-unsafe.rs |
 | 14* | align_to | 1: array bitwise toggle，another unsafe method（transmute + from_be_bytes）| M | Y  |1-slice-simple-unsafe-high.rs,1-vec-simple-unsafe-high.rs | 
