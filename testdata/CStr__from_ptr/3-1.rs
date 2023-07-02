@@ -1,3 +1,7 @@
+  /*
+  https://github.com/denoland/deno/blob/4a18c761351dccb146973793cf22e6efffff18bf/cli/napi/js_native_api.rs#L781
+  */
+
 fn napi_create_string_latin1(
     env: *mut Env,
     string: *const u8,
@@ -35,6 +39,3 @@ fn napi_create_string_latin1(
   
     napi_ok
   }
-  /*
-  https://github.com/denoland/deno/blob/4a18c761351dccb146973793cf22e6efffff18bf/cli/napi/js_native_api.rs#L781
-  */

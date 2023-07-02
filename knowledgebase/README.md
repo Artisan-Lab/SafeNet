@@ -27,10 +27,13 @@
 | - | Box::from_raw | 2: Alloc layout<T>: replace with Box::new(T)  | M | Y | 2-alloci32-unsafe.rs |
 | - | Box::from_raw | 3: drop(&self) | M | Y | 3-dropself-unsafe.rs |
 | - | Box::from_raw | 4: Create Box\<A\> from Box\<B\>: depends on whether casting A to B is allowed | M | Y | 4-coersioncopy-unsafe.rs, 4-coersion-unsafe.rs |
-| 3 | Box::from_raw_in | 1: create a Box with a specific allocator | Y | Y | 1-simple-unsafe.rs| 
-| 4 | CStr::from_ptr | 1: ffi 只单纯调用了一下api | LOW  | 1-cstrfromptr-simple-unsafe-low.rs | 
-| - | CStr::from_ptr | 2: 没看懂意思，先给high | **HIGH**  |2-cstrfromptrconst-simple-unsafe-high.rs| 
-| 5 | CString::from_raw | 1: 没看懂意思，先给high | **HIGH**   |1-CStringfromraw-simple-unsafe-high.rs| 
+| 3* | Box::from_raw_in | 1: create a Box with a specific allocator | Y | Y | 1-simple-unsafe.rs| 
+| 4* | CStr::from_ptr | 1: From an FFI returned raw ptr | N | Y | 1-cstrfromffi-unsafe.rs | 
+| - | CStr::from_ptr | 2: Create a new CStr | Y | Y | 2-createcstr-unsafe.rs| 
+| - | CStr::from_ptr | 3: Raw ptr parameter | N | Y | 3-cstrfromptr-unsafe.rs | 
+| 5* | CString::from_raw | 1: Retake the ownership after FFI | N | Y | 1-retakeffi-unsafe.rs | 
+| - | CString::from_raw | 2: Modify through raw ptr, use as_bytes instead | Y | Y | 2-modify-unsafe.rs| 
+| - | CString::from_raw | 3: Raw ptr parameter (drop the content) | N | Y | 3-fromraw-unsafe.rs| 
 | 6 | MaybeUninit::array_assume_init| 1:和assumeinit中pattern2出现的实际相同 | **HIGH**   |1-array-simple-unsafe-high.rs|
 | 7* | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | M | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
 | - | Rc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 

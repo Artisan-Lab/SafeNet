@@ -1,3 +1,6 @@
+/*
+From: https://github.com/harryfei/remacs/blob/5b59c0f77113a1330853cff077a08f00c8f7fc88/rust_src/remacs-lib/files.rs#L165
+*/
 fn test_rust_make_temp() {
     let mut tmpdir = env::temp_dir();
     tmpdir.push(".emacs-XXXXXX");
@@ -12,6 +15,3 @@ fn test_rust_make_temp() {
     assert!(new_name != name_copy);
     assert!(save_errno == errno::errno());
 }
-/*
-https://github.com/harryfei/remacs/blob/5b59c0f77113a1330853cff077a08f00c8f7fc88/rust_src/remacs-lib/files.rs#L165
-*/

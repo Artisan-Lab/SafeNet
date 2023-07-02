@@ -1,3 +1,6 @@
+/*
+    From: https://github.com/rust-lang/rust/blob/ed1ce580ec27ffcfda1a95512e69185442f75ebe/library/std/src/sys/unix/os.rs#L141
+*/
 pub fn error_string(errno: i32) -> String {
     extern "C" {
         #[cfg_attr(
@@ -22,6 +25,4 @@ pub fn error_string(errno: i32) -> String {
     }
 }
 
-/*
-https://github.com/rust-lang/rust/blob/ed1ce580ec27ffcfda1a95512e69185442f75ebe/library/std/src/sys/unix/os.rs#L141
-*/
+

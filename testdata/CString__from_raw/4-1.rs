@@ -1,3 +1,7 @@
+/*
+From https://github.com/rustdesk/rustdesk/blob/50c1015e8651c622f7539956d24ca427b4a45cf8/libs/clipboard/src/lib.rs#L314
+*/
+
 pub fn server_format_list(
     context: &mut Box<CliprdrClientContext>,
     conn_id: i32,
@@ -51,6 +55,3 @@ pub fn server_format_list(
         ret as u32
     }
 }
-/*
-https://github.com/rustdesk/rustdesk/blob/50c1015e8651c622f7539956d24ca427b4a45cf8/libs/clipboard/src/lib.rs#L314
-*/
