@@ -49,8 +49,6 @@
 | -  | Vec::from_raw_parts | 3: from other Rust objects | Y | Y | 3-frommem-unsafe.rs |
 | -  | Vec::from_raw_parts | 4: Ownership issue: use as_ptr instead | Y | Y | 4-ownership-unsafe.rs |
 | -  | Vec::from_raw_parts | 5: Modify Vec contents | Y | Y | 5-iteminc-unsafe.rs|
-
-| 9 | Vec::from_raw_parts | 1: 与String::from_raw_parts问题相同，这些case改法只有一个就是按位读，这里一个case 1-frommem-unsafe-high.rs，看似多，但是其实就是一堆无效操作，就存了一个数。 这里的1-fromraw-unsafe-high.rs也是无目的一个例子，建议去掉| **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-fromraw-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | - | Vec::from_raw_parts_in | 2: 这个api和上面的Vec::from_raw_parts问题一模一样 | **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | 10 | Weak::from_raw | 1: 写的多，但是跟Boxfromraw pattern2 是一样的 | LOW  | 1-weakfromraw-simple-unsafe-low.rs |
 | 11* | assume_init | 1: Box/Rc/Arc simple use,replaceable, init(new) | Y | N  | 1-box-simple-unsafe-low.rs,1-box-slice-unsafe-lowrs ,1-rc-simple-unsafe-low.rs, 1-rc-slice-unsafe-low.rs,1-arc-simple-unsafe-low.rs | 
