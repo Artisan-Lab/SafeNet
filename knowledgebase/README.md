@@ -67,8 +67,9 @@
 | 10 | Weak::from_raw | 1: 写的多，但是跟Boxfromraw pattern2 是一样的 | LOW  | 1-weakfromraw-simple-unsafe-low.rs |
 | 11* | assume_init | 1: Create uninit and then init | Y | Y  | 1-box-unsafe.rs, 1-rc-unsafe.rs, 1-arc-unsafe-low.rs, ... | 
 | - | assume_init | 2: MaybeUninit parameter  | N | Y |  2-mayi32-unsafe.rs |
-| - | assume_init | 3: to be init by other APIs | M | Y |  3-mayvec-unsafe.rs |
-| 12* | mem::transmute | 1:misuse,replace with as | Y | Y  | 1-i32ptrusize-unsafe.rs,1-void-unsafe.rs, 1-i2u32-unsafe.rs，| 
+| - | assume_init | 3: MaybeUninit retvalue  | N | Y |  3-retmay-unsafe.rs |
+| - | assume_init | 4: to be init by other APIs | M | Y |  4-mayvec-unsafe.rs |
+| 12* | mem::transmute | 1:misuse,replace with as | Y | Y  | 1-i32ptrusize-unsafe.rs,1-void-unsafe.rs, 1-i2u32-unsafe.rs | 
 | - | mem::transmute | 2: misuse, replace with safe APIs:from_le_bytes...  | Y | Y | 2-bytes2u32-unsafe.rs, 2-str2slice-unsafe.rs  |
 | - | mem::transmute | 3: convert ContainerA<P> to ContainerA<Q> or ContainerA to ContainerB | Y | Y |  3-vecoption-unsafe-high-2.rs, 3-vecstring-unsafe.rs|
 | - | mem::transmute | 4: convert raw to ref  | N | Y | 4-raw2own-unsafe.rs |

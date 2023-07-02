@@ -1,3 +1,7 @@
+/*
+https://github.com/PinkDiamond1/hhvm/blob/9592c3ee4d91b5870587f45fbf481382ebab5d21/hphp/hack/src/ocamlrep_marshal/ser.rs#L240
+*/
+
 fn resize_position_table(&mut self) {
     let old = std::mem::replace(
         &mut self.pos_table,
@@ -11,7 +15,3 @@ fn resize_position_table(&mut self) {
         },
     );
 }
-
-/*
-https://github.com/PinkDiamond1/hhvm/blob/9592c3ee4d91b5870587f45fbf481382ebab5d21/hphp/hack/src/ocamlrep_marshal/ser.rs#L240
-*/

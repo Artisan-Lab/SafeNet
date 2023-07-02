@@ -1,3 +1,6 @@
+/*
+https://github.com/ChorusOne/solana-mev/blob/c60c05a7e620b95b6c240ea56cd0180fcb331c7d/sdk/src/packet.rs#L41
+*/
 pub struct Packet {
     buffer: [u8; PACKET_DATA_SIZE],
     pub meta: Meta,
@@ -10,6 +13,3 @@ impl Default for Packet {
         }
     }
 }
-/*
-https://github.com/ChorusOne/solana-mev/blob/c60c05a7e620b95b6c240ea56cd0180fcb331c7d/sdk/src/packet.rs#L41
-*/
