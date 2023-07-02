@@ -58,8 +58,8 @@
 | - | transmute | 6:bitwise reading，replace with safe methods using slice and string | Y | Y | 6-misused-str2slice-unsafe-high-1.rs|
 | 13* | swap | 1:use slice | Y | Y  | 1-ptr-nonoverlapping-unsafe-high-1.rs,1-ptr-nonoverlapping-unsafe-high-2.rs,1-ptr-overlapping-unsafe-high-3.rs | 
 | - | swap | 2: misuse,mem::swap | Y | Y | 2-mem-misuse-unsafe.rs |
-| 14 | align_to | 1: 把一个数组按位切换类型，目前看来必须unsafe，可以transmute+from_be_bytes，但还是unsafe, 因为这个替换所以给到high | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 1-vec-simple-unsafe-high.rs | 
-| 15| align_to_mut | 1: 同上 | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 2-vec-simple-unsafe-high-high.rs | 
+| 14* | align_to | 1: array bitwise toggle，another unsafe method（transmute + from_be_bytes）| M | Y  |1-slice-simple-unsafe-high.rs,1-vec-simple-unsafe-high.rs | 
+| 15* | align_to_mut | 1: array bitwise toggle，another unsafe method（transmute + from_be_bytes） | M | Y |1-slice-simple-unsafe-high.rs,2-vec-simple-unsafe-high-high.rs | 
 | 16 | alloc | 1: global allocator不可避免unsafe, 但是复杂语义如果尝试使用alloc的话可能有不同形式 | LOW  |1-alloc-simple-unsafe-low.rs <br> 1-alloczero-simple-unsafe-low.rs | 
 | 17 | as_bytes_mut | 1: 例子是可以把string变成bytes数组来修改值，safe版本是先变成可变字符数组，在目的是修改字符的语义下有意义 | **HIGH** |1-arc-count-simple-unsafe.rs | 
 | 18 | as_mut | 1: 太简单到原子 | LOW  | 1-ptr-nn-unsafe-low.rs <br>1-ptr-simple-unsafe-low.rs| 
@@ -84,7 +84,6 @@
 | 32 | read | 1: 基础使用,其中 所有权与这个例子无关，目的是指针位置读取，所以这两个是同一个pattern | low | 1-ptr-ownership-unsafe-low.rs <br> 1-ptr-simple-unsafe-low.rs | 
 | - | ptr::read | 2: 通过read来进行变量交换，memswap是一个避开所有权冲突的使用方法，所以存在何时使用memswap的问题，这个一定是high | **HIGH** | 2-ptr-read2swap-unsafe-high.rs |
 | - | ptr::read_unaligned |
-| - | ptr::read_volatile |
 | - | ptr::replace | 1: 基础使用 | low | 1-ptr-simple-unsafe-low.rs |
 | - | ptr::swap | 1: swap是一个有复杂语义的api，肯定是high，这里三个case虽然调用api的不同,但是用法是完全一样的，在修改方法上没有不同 | **HIGH**  | 1-ptr-nonoverlapping-unsafe-2-high.rs <br> 1-ptr-nonoverlapping-unsafe-high.rs <br> 1-ptr-overlapping-unsafe-high.rs| 
 | - | ptr::swap_nonoverlapping |
@@ -92,16 +91,12 @@
 | - | ptr::write | 2: swap | **HIGH**  | 2-ptr-write2swap-unsafe-high.rs |
 | - | ptr::write_bytes | 
 | - | ptr::write_unaligned |
-| - | ptr::write_volatile |
-| 33 | Rc::decrement_strong_count| 1: 基础使用 | low | 1-rc-count-simple-unsafe-low.rs |
-| 34 | Rc::from_raw | 1: 与boxfromraw类似，本例与boxfromraw pattern3一致 | low | 1-rcfromraw-simple-unsafe-low.rs |
-| 35 | Rc::increment_strong_count | 1:基础使用 | low | 1-rc+count-simple-unsafe-low.rs |
-| 36 | set_len | 1: 用setlen创建一个vec给ffi用，无法替换 | **HIGH** | 1-vec-ffi-unsafe-high.rs |
+| *33 | set_len | 1: 用setlen创建一个vec给ffi用，无法替换 | **HIGH** | 1-vec-ffi-unsafe-high.rs |
 | -  |set_len | 2: 基础使用，但是这个有使用目的，vec的capacity是确定的，但是vec是翻倍增长的，这个例子用来缩掉vec不用的长度，resize | **HIGH** | 2-vec-shorten-unsafe-high.rs |
-| 37 | slice::from_ptr_range | 1: 返回两个指针夹着的slice 看std中的描述应该是无法替换,这个case确实只是调了一下，但是这个api确实都可以通过指指针一位一位读来解决，标记为high | **HIGH** | 1-slicefromrange-mut-unsafe-high.rs <br> 1-slicefromrange-simple-unsafe-low.rs|
+| 34 | slice::from_ptr_range | 1: 返回两个指针夹着的slice 看std中的描述应该是无法替换,这个case确实只是调了一下，但是这个api确实都可以通过指指针一位一位读来解决，标记为high | **HIGH** | 1-slicefromrange-mut-unsafe-high.rs <br> 1-slicefromrange-simple-unsafe-low.rs|
 | - | split_at_mut |
-| 38 | sub_ptr | 1: 基础调用，两个case没区别 | LOW  | 1-ptr-mut-unsafe-low.rs <br> 1-ptr-simple-unsafe-low.rs| 
-| - | offset_from | 1: misused 与普通版其实没区别，都是基础使用 | low | 1-misused-ptr-mut-unsafe-low.rs <br> 1-ptr-mut-unsafe-low.rs <br>1-ptr-simple-unsafe-low.rs |
+| 35 | sub_ptr | 1: 基础调用，两个case没区别 | LOW  | 1-ptr-mut-unsafe-low.rs <br> 1-ptr-simple-unsafe-low.rs| 
+| 36 | offset_from | 1: misused 与普通版其实没区别，都是基础使用 | low | 1-misused-ptr-mut-unsafe-low.rs <br> 1-ptr-mut-unsafe-low.rs <br>1-ptr-simple-unsafe-low.rs |
 
 
 ### Unsafe APIs that can hardly be replaced: 
