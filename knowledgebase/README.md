@@ -55,8 +55,7 @@
 | - | transmute | 3:vec，"into_iter" method converts to an iterator | Y | Y | 3-array-maybeuninit-unsafe-1.rs,3-vec-option-unsafe-high-2.rs,3-vec-string-unsafe-high-3.rs|
 | - | transmute | 4: reborrow  | N | Y | 4-irreplaceable-i2u32-unsafe-high-1.rs，4-irreplaceable-raw2own-unsafe-high-2.rs |
 | - | transmute | 5:modify lifetimes | M | Y | 5-lifetime-extend-unsafe-1.rs，5-lifetime-shrink-unsafe-2.rs|
-| - | transmute | 6:
-bitwise reading，replace with safe methods using slice and string | Y | Y | 6-misused-str2slice-unsafe-high-1.rs|
+| - | transmute | 6:bitwise reading，replace with safe methods using slice and string | Y | Y | 6-misused-str2slice-unsafe-high-1.rs|
 | 13* | swap | 1:use slice | Y | Y  | 1-ptr-nonoverlapping-unsafe-high-1.rs,1-ptr-nonoverlapping-unsafe-high-2.rs,1-ptr-overlapping-unsafe-high-3.rs | 
 | - | swap | 2: misuse,mem::swap | Y | Y | 2-mem-misuse-unsafe.rs |
 | 14 | align_to | 1: 把一个数组按位切换类型，目前看来必须unsafe，可以transmute+from_be_bytes，但还是unsafe, 因为这个替换所以给到high | **HIGH**  |1-slice-simple-unsafe-high.rs <br> 1-vec-simple-unsafe-high.rs | 
