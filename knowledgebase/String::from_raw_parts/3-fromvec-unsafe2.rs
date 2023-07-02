@@ -11,7 +11,6 @@ use std::mem;
 fn main() {
     let v = vec![b'h',b'e',b'l',b'l',b'o'];
     let mut v = mem::ManuallyDrop::new(v);
-    //let v = vec!['h','e','l','l','o'];
     let p = v.as_mut_ptr();
     let l = v.len();
     let c = v.capacity();

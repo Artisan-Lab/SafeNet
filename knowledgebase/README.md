@@ -39,9 +39,11 @@
 | - | Rc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
 | - | Rc::from_raw | 3: Create Rc\<B\> from A: replaceable, Convert A to B first | Y | Y | 3-coersion-unsafe.rs | 
 | - | Rc::from_raw | 4: &self parameter: depends on Copy or Clone | M | Y | 4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
-| 8 | String::from_raw_parts | 1: from_raw_parts 的基本解决方案，从指针处按位读，读到想要的位置，如果这个指针是safe的，那就能safe。这三个case本质是一样，只是分别是iteminc按位指针处+1，fromvec按位转换类型，1-fromraw-unsafe-high.rs 是一个无目的例子，建议去掉 | **HIGH**  | 1-fromraw-unsafe-high.rs <br> 1-fromvec-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
-| -  | String::from_raw_parts | 2: 这个本质上是和 pattern1相同，属于类型转换，但是因为String有自己的to_string方法非常方便，所以改法不同了 | **HIGH**  | 2-fromstr-unsafe-high.rs |
-| -  | String::from_raw_parts | 3: 怕直接用string消耗所有权，所以先用个ptr，用from_raw_parts单纯来生产个ptr，恐怕没有人这么做，价值小，因为是更复杂的用法实现了一个简单的功能 与transmute的as价值差不多 | **HIGH**  | 3-ownership-unsafe.rs |
+| 8 | String::from_raw_parts | 1: Raw ptr parameter | N | Y | 1-fromraw-unsafe.rs |
+| -  | String::from_raw_parts | 2: Returned raw ptr | N | Y | 2-fromres-unsafe.rs |
+| -  | String::from_raw_parts | 3: from other Rust objects | Y | Y | 3-fromstr-unsafe.rs, 3-fromvec-unsafe.rs, 3-fromvec-unsafe2.rs |
+| -  | String::from_raw_parts | 4: Ownership issue: use as_ptr instead | Y | Y | 4-ownership-unsafe.rs |
+| -  | String::from_raw_parts | 5: Modify String contents | Y | Y | 5-modify-unsafe.rs |
 | 9 | Vec::from_raw_parts | 1: 与String::from_raw_parts问题相同，这些case改法只有一个就是按位读，这里一个case 1-frommem-unsafe-high.rs，看似多，但是其实就是一堆无效操作，就存了一个数。 这里的1-fromraw-unsafe-high.rs也是无目的一个例子，建议去掉| **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-fromraw-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | - | Vec::from_raw_parts_in | 2: 这个api和上面的Vec::from_raw_parts问题一模一样 | **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | 10 | Weak::from_raw | 1: 写的多，但是跟Boxfromraw pattern2 是一样的 | LOW  | 1-weakfromraw-simple-unsafe-low.rs |

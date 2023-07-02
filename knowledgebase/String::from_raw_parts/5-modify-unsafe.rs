@@ -2,7 +2,7 @@
     This is a modified case from std
     Link: https://doc.rust-lang.org/std/string/struct.String.html#method.from_raw_parts
     Purpose: change each byte of of the string
-    Replaceable? No, because we cannot ensure the modified results are valid utf8s.
+    Replaceable? Yes.
 */
 
 #![allow(unused)]
