@@ -68,12 +68,12 @@
 | 11* | assume_init | 1: Box/Rc/Arc simple use,replaceable, init(new) | Y | N  | 1-box-simple-unsafe-low.rs,1-box-slice-unsafe-lowrs ,1-rc-simple-unsafe-low.rs, 1-rc-slice-unsafe-low.rs,1-arc-simple-unsafe-low.rs | 
 | - | assume_init | 2: maybeuninit  | M | Y | 2-maybeuninit-refi32-unsafe-high.rs,2-maybeuninit-struct-unsafe-high.rs,2-maybeuninit-vec-unsafe-high.rs,2-maybeuninit-zeroed-unsafe-high.rs |
 | - | assume_init | 3:\[MaybeUninit\]+ Other unsafe APIs | M | Y | 3-array-maybeuninitstring-unsafe-high.rs,3-array-maybeuninitvec-unsafe-high.rs |
-| 12* | transmute | 1:misuse,replace with as | Y | Y  | 1-misused-i32ptrusize-unsafe-high-1.rs,1-misused-void-unsafe-high-2.rs | 
-| - | transmute | 2: misuse,byte operations，replace with safe APIs:from_le_bytes...  | Y | Y | 2-misused-bytes2u32-unsafe-high-1.rs |
-| - | transmute | 3:vec，"into_iter" method converts to an iterator | Y | Y | 3-array-maybeuninit-unsafe-1.rs,3-vec-option-unsafe-high-2.rs,3-vec-string-unsafe-high-3.rs|
-| - | transmute | 4: reborrow  | N | Y | 4-irreplaceable-i2u32-unsafe-high-1.rs，4-irreplaceable-raw2own-unsafe-high-2.rs |
-| - | transmute | 5:modify lifetimes | M | Y | 5-lifetime-extend-unsafe-1.rs，5-lifetime-shrink-unsafe-2.rs|
-| - | transmute | 6:bitwise reading，replace with safe methods using slice and string | Y | Y | 6-misused-str2slice-unsafe-high-1.rs|
+| 12* | transmute | 1:misuse,replace with as | Y | Y  | 1-i32ptrusize-unsafe.rs,1-void-unsafe.rs, 1-i2u32-unsafe.rs，| 
+| - | transmute | 2: misuse,byte operations，replace with safe APIs:from_le_bytes...  | Y | Y | 2-bytes2u32-unsafe.rs |
+| - | transmute | 3:vec，"into_iter" method converts to an iterator | Y | Y | 3-arraymaybeuninit-unsafe.rs,3-vecoption-unsafe-high-2.rs, 3-vecstring-unsafe.rs|
+| - | transmute | 4: convert raw to ref  | N | Y | 4-raw2own-unsafe.rs |
+| - | transmute | 5:modify lifetimes | M | Y | 5-lifetimeextend-unsafe-1.rs，5-lifetimeshrink-unsafe-2.rs|
+| - | transmute | 6:bitwise reading，replace with safe methods using slice and string | Y | Y | 6-misused-str2slice-unsafe.rs |
 | 13* | swap | 1:use slice | Y | Y  | 1-ptr-nonoverlapping-unsafe-high-1.rs,1-ptr-nonoverlapping-unsafe-high-2.rs,1-ptr-overlapping-unsafe-high-3.rs | 
 | - | swap | 2: misuse,mem::swap | Y | Y | 2-mem-misuse-unsafe.rs |
 | 14* | align_to | 1: array bitwise toggle，another unsafe method（transmute + from_be_bytes）| M | Y  |1-slice-simple-unsafe-high.rs,1-vec-simple-unsafe-high.rs | 
