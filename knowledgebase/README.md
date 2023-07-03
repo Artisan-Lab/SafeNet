@@ -23,17 +23,13 @@
 | - | Arc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
 | - | Arc::from_raw | 3: Create Arc\<B\> from A: replaceable, Convert A to B first | Y | Y | 3-coersion-unsafe.rs | 
 | - | Arc::from_raw | 4: &self parameter: depends on Copy or Clone | M | Y | 4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
-| 2(new) | Box::from_raw | 1: Raw ptr parameter | N | Y | new1-fromraw-unsafe.rs|
+| 2* | Box::from_raw | 1: Raw ptr parameter | N | Y | new1-fromraw-unsafe.rs|
 | -  | Box::from_raw | 2: Returned raw ptr | N | Y | new2-dropraw-unsafe.rs |
 | -  | Box::from_raw | 3: to other Rust objects | Y | Y | new3-tostr-unsafe.rs,new3-tovec-unsafe.rs |
 | -  | Box::from_raw | 4: Ownership issue: use as_ptr instead | Y | Y | new4-coersion-unsafe.rs,new4-copycoersion-unsafe.rs |
 | -  | Box::from_raw | 5: Modify Box contents | Y | Y | new5-modify-unsafe.rs |
 | -  | Box::from_raw | 6: Function parameters: raw | Y | Y | new6-funparraw-unsafe.rs |
 | -  | Box::from_raw | 7: Function parameters: self | M | Y | new7-dropself-unsafe.rs |
-| 2* | Box::from_raw | 1: Raw ptr parameter: drop raw pointers | N | Y  | 1-dropraw-unsafe.rs | 
-| - | Box::from_raw | 2: Alloc layout<T>: replace with Box::new(T)  | M | Y | 2-alloci32-unsafe.rs |
-| - | Box::from_raw | 3: drop(&self) | M | Y | 3-dropself-unsafe.rs |
-| - | Box::from_raw | 4: Create Box\<A\> from Box\<B\>: depends on whether casting A to B is allowed | M | Y | 4-coersioncopy-unsafe.rs, 4-coersion-unsafe.rs |
 | 3* | Box::from_raw_in | 1: create a Box with a specific allocator | Y | Y | 1-simple-unsafe.rs| 
 | 4* | CStr::from_ptr | 1: From an FFI returned raw ptr | N | Y | 1-cstrfromffi-unsafe.rs | 
 | - | CStr::from_ptr | 2: Create a new CStr | Y | Y | 2-createcstr-unsafe.rs| 
