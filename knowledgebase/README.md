@@ -22,18 +22,18 @@
 | 1* | Box::from_raw | 1: Function parameters: raw | Y | 1-funparraw-unsafe.rs |
 | -  | Box::from_raw | 2: Function parameters: self | M | 2-dropself-unsafe.rs |
 | -  | Box::from_raw | 3: Returned raw ptr | N |  3-dropraw-unsafe.rs |
-| -  | Box::from_raw | 4: Raw ptr parameter | N | 4-fromraw-unsafe.rs|
+| -  | Box::from_raw | 4: Used by another func | N | 4-fromraw-unsafe.rs|
 | -  | Box::from_raw | 5: to other Rust objects | Y |  5-tostr-unsafe.rs,5-tovec-unsafe.rs |
 | -  | Box::from_raw | 6: Modify Box contents | Y | 6-modify-unsafe.rs |
-| 2* | CStr::from_ptr | 1: From an FFI returned raw ptr | N |  1-cstrfromffi-unsafe.rs | 
+| 2 | CStr::from_ptr | 1: From an FFI returned raw ptr | N |  1-cstrfromffi-unsafe.rs | 
 | - | CStr::from_ptr | 2: Create a new CStr | Y |  2-createcstr-unsafe.rs| 
 | - | CStr::from_ptr | 3: Raw ptr parameter | N | 3-cstrfromptr-unsafe.rs | 
-| 3 | Vec::from_raw_parts | 1: Raw ptr parameter | N | 1-fromraw-unsafe.rs |
-| -  | Vec::from_raw_parts | 2: Returned raw ptr | N |  2-fromres-unsafe.rs |
-| -  | Vec::from_raw_parts | 3: from other Rust objects | Y | 3-frommem-unsafe.rs |
-| -  | Vec::from_raw_parts | 4: Ownership issue: use as_ptr instead | Y |  4-ownership-unsafe.rs |
-| -  | Vec::from_raw_parts | 5: Modify Vec contents | Y | 5-iteminc-unsafe.rs|
-| - | Vec::from_raw_parts_in | 2: 这个api和上面的Vec::from_raw_parts问题一模一样 | **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
+| 3* | Vec::from_raw_parts | 1: Function parameters: raw | N | 1-funparraw-unsafe.rs |
+| -  | Vec::from_raw_parts | 2: Function parameters: self | N |  2-funparself-unsafe.rs |
+| -  | Vec::from_raw_parts | 3: Returned raw ptr | Y | 3-returnbyother-unsafe.rs |
+| -  | Vec::from_raw_parts | 4: Used by another func | Y | 4-usedbyother-unsafe.rs|
+| -  | Vec::from_raw_parts | 5: to other Rust objects | Y | 5-frommem-unsafe.rs|
+| -  | Vec::from_raw_parts | 6: Modify Vec contents | Y | 6-iteminc-unsafe.rs|
 | 4* | CString::from_raw | 1: Raw ptr parameter | N |  new1-fromffi-unsafe.rs,new1-fromraw-unsafe.rs|
 | -  | CString::from_raw | 2: Returned raw ptr | N |   |
 | -  | CString::from_raw | 3: to other Rust objects | Y |   |
