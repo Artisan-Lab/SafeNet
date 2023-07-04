@@ -21,10 +21,9 @@
 |---------|---------|---------|---------|---------|
 | 1* | Box::from_raw | 1: Function parameters: raw | Y | 1-funparraw-unsafe.rs |
 | -  | Box::from_raw | 2: Function parameters: self | M | 2-dropself-unsafe.rs |
-| -  | Box::from_raw | 3: Raw ptr parameter | N | 3-fromraw-unsafe.rs|
-| -  | Box::from_raw | 4: Returned raw ptr | N |  4-dropraw-unsafe.rs |
+| -  | Box::from_raw | 3: Returned raw ptr | N |  3-dropraw-unsafe.rs |
+| -  | Box::from_raw | 4: Raw ptr parameter | N | 4-fromraw-unsafe.rs|
 | -  | Box::from_raw | 5: to other Rust objects | Y |  5-tostr-unsafe.rs,5-tovec-unsafe.rs |
-| -  | Box::from_raw | 4: Ownership issue: use as_ptr instead | Y | new4-coersion-unsafe.rs,new4-copycoersion-unsafe.rs |
 | -  | Box::from_raw | 6: Modify Box contents | Y | 6-modify-unsafe.rs |
 | 2* | CStr::from_ptr | 1: From an FFI returned raw ptr | N |  1-cstrfromffi-unsafe.rs | 
 | - | CStr::from_ptr | 2: Create a new CStr | Y |  2-createcstr-unsafe.rs| 
@@ -34,6 +33,7 @@
 | -  | Vec::from_raw_parts | 3: from other Rust objects | Y | 3-frommem-unsafe.rs |
 | -  | Vec::from_raw_parts | 4: Ownership issue: use as_ptr instead | Y |  4-ownership-unsafe.rs |
 | -  | Vec::from_raw_parts | 5: Modify Vec contents | Y | 5-iteminc-unsafe.rs|
+| - | Vec::from_raw_parts_in | 2: 这个api和上面的Vec::from_raw_parts问题一模一样 | **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | 4* | CString::from_raw | 1: Raw ptr parameter | N |  new1-fromffi-unsafe.rs,new1-fromraw-unsafe.rs|
 | -  | CString::from_raw | 2: Returned raw ptr | N |   |
 | -  | CString::from_raw | 3: to other Rust objects | Y |   |
@@ -49,8 +49,10 @@
 | - | mem::uninitialized | 2: create and init in the same function | Y | |
 | - | mem:: uninitialized | 3: create and init in another function with ref | N | |
 | - | mem:: uninitialized | 4: create and init in another function with raw ptr | with MaybeUninit | |
-| 7 | mem::zeroed | 1: might be replaceable with  (#derive[Default) ?  | M ] | |
-| - | mem::zeroed | 2: create and init in another function with raw ptr | | M,  (#derive[Default)  or use MaybeUninit | |
+| 7 | mem::zeroed | 1: The function with Rust primitive types | Y (#derive[Default)| ] | |
+| 2 | mem::zeroed | 2: create and init in the same function | Y | |
+| - | mem::zeroed | 3: create and init in another function with ref  | N | |
+| - | mem::zeroed | 4: create and init in another function with raw ptr | with MaybeUninit | |
 | 8* | assume_init | 1: Create uninit and then init | Y | Y  | 1-box-unsafe.rs, 1-rc-unsafe.rs, 1-arc-unsafe-low.rs, ... | 
 | - | assume_init | 2: MaybeUninit parameter  | N | Y |  2-mayi32-unsafe.rs |
 | - | assume_init | 3: MaybeUninit retvalue  | N | Y |  3-retmay-unsafe.rs |
