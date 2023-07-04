@@ -43,7 +43,6 @@
 | -  | CString::from_raw | 4: Used by another func | Y | 4-retakeffi-unsafe.rs|
 | -  | CString::from_raw | 5: to other Rust objects | Y | 5-cstrtoboxstr-unsafe.rs,5-vectostr-unsafe.rs  |
 | -  | CString::from_raw | 6: Modify Box contents | Y | 6-modify-unsafe.rs |
-<<<<<<< HEAD
 | 5* | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | 1-rawptr-unsafe.rs | 
 | -  | Rc::from_raw |  Function parameters: raw | M | 2-selfcopy2rc-unsafe.rs,2-selfclone2rc-unsafe.rs |
 | -  | Rc::from_raw | 3: Returned raw ptr | N | 3-fromraw-unsafe.rs |
@@ -59,15 +58,6 @@
 | - | mem::zeroed | 3: create and init in another function with ref  | N | |
 | - | mem::zeroed | 4: create and init in another function with raw ptr | with MaybeUninit | |
 | 8* | assume_init | 1: Create uninit and then init | Y | Y  | 1-box-unsafe.rs, 1-rc-unsafe.rs, 1-arc-unsafe-low.rs, ... | 
-=======
-| 5 | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
-| - | Rc::from_raw | 2: Raw ptr parameter: irreplaceable | N |2-rawptr-unsafe.rs | 
-| - | Rc::from_raw | 3: Create Rc\<B\> from A: replaceable, Convert A to B first | Y | 3-coersion-unsafe.rs | 
-| - | Rc::from_raw | 4: &self parameter: depends on Copy or Clone | M |4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
-| 6 | mem::zeroed | 1: default type of creating an object with the zeroed() | Y (#derive[Default)| ] | |
-| - | mem::zeroed | 2: create and init in another function with raw ptr | Y (#derive[Default) or  MaybeUninit | |
-| 7* | assume_init | 1: Create uninit and then init | Y | Y  | 1-box-unsafe.rs, 1-rc-unsafe.rs, 1-arc-unsafe-low.rs, ... | 
->>>>>>> d2e52da69c113bf4b6023149053d389639fd3319
 | - | assume_init | 2: MaybeUninit parameter  | N | Y |  2-mayi32-unsafe.rs |
 | - | assume_init | 3: MaybeUninit retvalue  | N | Y |  3-retmay-unsafe.rs |
 | - | assume_init | 4: to be init by other APIs | M | Y |  4-mayvec-unsafe.rs |
