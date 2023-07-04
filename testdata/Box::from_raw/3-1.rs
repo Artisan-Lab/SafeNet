@@ -1,30 +1,12 @@
-/*
-From: https://github.com/cedric-h/slither/blob/7da78d353e16e37dca9994756d6142440aea3934/rust-gc/gc/src/gc.rs#L32
-*/
-/*
-struct GcState {
-    bytes_allocated: usize,
-    threshold: usize,
-    boxes_start: Option<NonNull<GcBox<Trace>>>,
+pub extern "C" fn backing_store_deleter_callback(
+  data: *mut c_void,
+  _byte_length: usize,
+  deleter_data: *mut c_void,
+) {
+  let mut finalizer =
+    unsafe { Box::from_raw(deleter_data as *mut BufferFinalizer) };
+
+  finalizer.finalize_data = data;
 }
 
-impl Drop for GcState {
-*/
-    fn drop(&mut self) {
-        unsafe {
-            {
-                let mut p = &self.boxes_start;
-                while let Some(node) = *p {
-                    Finalize::finalize(&(*node.as_ptr()).data);
-                    p = &(*node.as_ptr()).header.next;
-                }
-            }
-
-            let _guard = DropGuard::new();
-            while let Some(node) = self.boxes_start {
-                let node = Box::from_raw(node.as_ptr());
-                self.boxes_start = node.header.next;
-            }
-        }
-    }
-//}
+// https://github.com/denoland/deno/blob/aaabff710f756f7dc8651b8e92e4cc5147830e49/cli/napi/js_native_api.rs#L577
