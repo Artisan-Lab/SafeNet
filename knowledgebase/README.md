@@ -22,26 +22,25 @@
 | 1* | Box::from_raw | 1: Function parameters: raw | Y | 1-funparraw-unsafe.rs |
 | -  | Box::from_raw | 2: Function parameters: self | M | 2-dropself-unsafe.rs |
 | -  | Box::from_raw | 3: Returned raw ptr | N |  3-dropraw-unsafe.rs |
-| -  | Box::from_raw | 4: Used by another func | N | 4-fromraw-unsafe.rs|
+| -  | Box::from_raw | 4: Used by another func | Y | 4-fromraw-unsafe.rs|
 | -  | Box::from_raw | 5: to other Rust objects | Y |  5-tostr-unsafe.rs,5-tovec-unsafe.rs |
 | -  | Box::from_raw | 6: Modify Box contents | Y | 6-modify-unsafe.rs |
 | 2 | CStr::from_ptr | 1: From an FFI returned raw ptr | N |  1-cstrfromffi-unsafe.rs | 
 | - | CStr::from_ptr | 2: Create a new CStr | Y |  2-createcstr-unsafe.rs| 
 | - | CStr::from_ptr | 3: Raw ptr parameter | N | 3-cstrfromptr-unsafe.rs | 
 | 3* | Vec::from_raw_parts | 1: Function parameters: raw | N | 1-funparraw-unsafe.rs |
-| -  | Vec::from_raw_parts | 2: Function parameters: self | N |  2-funparself-unsafe.rs |
-| -  | Vec::from_raw_parts | 3: Returned raw ptr | Y | 3-returnbyother-unsafe.rs |
+| -  | Vec::from_raw_parts | 2: Function parameters: self | M |  2-funparself-unsafe.rs |
+| -  | Vec::from_raw_parts | 3: Returned raw ptr | N | 3-returnbyother-unsafe.rs |
 | -  | Vec::from_raw_parts | 4: Used by another func | Y | 4-usedbyother-unsafe.rs|
 | -  | Vec::from_raw_parts | 5: to other Rust objects | Y | 5-frommem-unsafe.rs|
 | -  | Vec::from_raw_parts | 6: Modify Vec contents | Y | 6-iteminc-unsafe.rs|
-| 4* | CString::from_raw | 1: Raw ptr parameter | N |  new1-fromffi-unsafe.rs,new1-fromraw-unsafe.rs|
-| -  | CString::from_raw | 2: Returned raw ptr | N |   |
-| -  | CString::from_raw | 3: to other Rust objects | Y |   |
-| -  | CString::from_raw | 4: Ownership issue: Retake the ownership after FFI | N | new4-retakeffi-unsafe.rs |
-| -  | CString::from_raw | 5: Modify CString contents | Y | new5-modify-unsafe.rs |
-| -  | CString::from_raw | 6: Function parameters: raw | Y |  |
-| -  | CString::from_raw | 7: Function parameters: self | M |  |
-| 5* | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
+| 4* | CString::from_raw | 1: Function parameters: raw | N |1-parraw-unsafe.rs,1-parraw2-unsafe.rs|
+| -  | CString::from_raw | 2: Function parameters: self | M | 2-parself-unsafe.rs  |
+| -  | CString::from_raw | 3: Returned raw ptr | N |  3-fromfoo-unsafe.rs |
+| -  | CString::from_raw | 4: Used by another func | Y | 4-retakeffi-unsafe.rs|
+| -  | CString::from_raw | 5: to other Rust objects | Y | 5-cstrtoboxstr-unsafe.rs,5-vectostr-unsafe.rs  |
+| -  | CString::from_raw | 6: Modify Box contents | Y | 6-modify-unsafe.rs |
+| 5 | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
 | - | Rc::from_raw | 2: Raw ptr parameter: irreplaceable | N |2-rawptr-unsafe.rs | 
 | - | Rc::from_raw | 3: Create Rc\<B\> from A: replaceable, Convert A to B first | Y | 3-coersion-unsafe.rs | 
 | - | Rc::from_raw | 4: &self parameter: depends on Copy or Clone | M |4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
