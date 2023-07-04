@@ -50,10 +50,8 @@
 | - | mem::uninitialized | 2: create and init in the same function | Y | |
 | - | mem:: uninitialized | 3: create and init in another function with ref | N | |
 | - | mem:: uninitialized | 4: create and init in another function with raw ptr | with MaybeUninit | |
-| 7 | mem::zeroed | 1: The function with Rust primitive types | Y (#derive[Default)| ] | |
-| 2 | mem::zeroed | 2: create and init in the same function | Y | |
-| - | mem::zeroed | 3: create and init in another function with ref  | N | |
-| - | mem::zeroed | 4: create and init in another function with raw ptr | with MaybeUninit | |
+| 7 | mem::zeroed | 1: might be replaceable with  (#derive[Default) ?  | M ] | |
+| - | mem::zeroed | 2: create and init in another function with raw ptr | | M,  (#derive[Default)  or use MaybeUninit | |
 | 8* | assume_init | 1: Create uninit and then init | Y | Y  | 1-box-unsafe.rs, 1-rc-unsafe.rs, 1-arc-unsafe-low.rs, ... | 
 | - | assume_init | 2: MaybeUninit parameter  | N | Y |  2-mayi32-unsafe.rs |
 | - | assume_init | 3: MaybeUninit retvalue  | N | Y |  3-retmay-unsafe.rs |
