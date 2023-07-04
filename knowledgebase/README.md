@@ -43,6 +43,7 @@
 | -  | CString::from_raw | 4: Used by another func | Y | 4-retakeffi-unsafe.rs|
 | -  | CString::from_raw | 5: to other Rust objects | Y | 5-cstrtoboxstr-unsafe.rs,5-vectostr-unsafe.rs  |
 | -  | CString::from_raw | 6: Modify Box contents | Y | 6-modify-unsafe.rs |
+<<<<<<< HEAD
 | 5* | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | 1-rawptr-unsafe.rs | 
 | -  | Rc::from_raw |  Function parameters: raw | M | 2-selfcopy2rc-unsafe.rs,2-selfclone2rc-unsafe.rs |
 | -  | Rc::from_raw | 3: Returned raw ptr | N | 3-fromraw-unsafe.rs |
@@ -58,30 +59,40 @@
 | - | mem::zeroed | 3: create and init in another function with ref  | N | |
 | - | mem::zeroed | 4: create and init in another function with raw ptr | with MaybeUninit | |
 | 8* | assume_init | 1: Create uninit and then init | Y | Y  | 1-box-unsafe.rs, 1-rc-unsafe.rs, 1-arc-unsafe-low.rs, ... | 
+=======
+| 5 | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
+| - | Rc::from_raw | 2: Raw ptr parameter: irreplaceable | N |2-rawptr-unsafe.rs | 
+| - | Rc::from_raw | 3: Create Rc\<B\> from A: replaceable, Convert A to B first | Y | 3-coersion-unsafe.rs | 
+| - | Rc::from_raw | 4: &self parameter: depends on Copy or Clone | M |4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
+| 6 | mem::zeroed | 1: default type of creating an object with the zeroed() | Y (#derive[Default)| ] | |
+| - | mem::zeroed | 2: create and init in another function with raw ptr | Y (#derive[Default) or  MaybeUninit | |
+| 7* | assume_init | 1: Create uninit and then init | Y | Y  | 1-box-unsafe.rs, 1-rc-unsafe.rs, 1-arc-unsafe-low.rs, ... | 
+>>>>>>> d2e52da69c113bf4b6023149053d389639fd3319
 | - | assume_init | 2: MaybeUninit parameter  | N | Y |  2-mayi32-unsafe.rs |
 | - | assume_init | 3: MaybeUninit retvalue  | N | Y |  3-retmay-unsafe.rs |
 | - | assume_init | 4: to be init by other APIs | M | Y |  4-mayvec-unsafe.rs |
-| 9* | mem::transmute | 1:misuse,replace with as | Y | Y  | 1-i32ptrusize-unsafe.rs,1-void-unsafe.rs, 1-i2u32-unsafe.rs | 
+| 8* | mem::transmute | 1:misuse,replace with as | Y | Y  | 1-i32ptrusize-unsafe.rs,1-void-unsafe.rs, 1-i2u32-unsafe.rs | 
 | - | mem::transmute | 2: misuse, replace with safe APIs:from_le_bytes...  | Y | Y | 2-bytes2u32-unsafe.rs, 2-str2slice-unsafe.rs  |
 | - | mem::transmute | 3: convert ContainerA<P> to ContainerA<Q> or ContainerA to ContainerB | Y | Y |  3-vecoption-unsafe-high-2.rs, 3-vecstring-unsafe.rs|
 | - | mem::transmute | 4: convert raw to ref  | N | Y | 4-raw2own-unsafe.rs |
 | - | mem::transmute | 5: modify lifetimes | M | Y | 5-lifetimeextend-unsafe.rs，5-lifetimeshrink-unsafe.rs |
 | - | mem::transmute | 6: Maybeuninit to init | N | Y | 6-maybeuninit-unsafe.rs |
-| 10 | ptr::copy |
-| 11 | ptr::copy_nonoverlapping |
-| 12 | ptr::drop_in_place |
-| 13 | ptr::read | 1: 基础使用,其中 所有权与这个例子无关，目的是指针位置读取，所以这两个是同一个pattern | low | 1-ptr-ownership-unsafe-low.rs <br> 1-ptr-simple-unsafe-low.rs | 
+| 9 | ptr::copy |
+| 10 | ptr::copy_nonoverlapping |
+| 11 | ptr::drop_in_place |
+| 12 | ptr::read | 1: 基础使用,其中 所有权与这个例子无关，目的是指针位置读取，所以这两个是同一个pattern | low | 1-ptr-ownership-unsafe-low.rs <br> 1-ptr-simple-unsafe-low.rs | 
 | - | ptr::read | 2: 通过read来进行变量交换，memswap是一个避开所有权冲突的使用方法，所以存在何时使用memswap的问题，这个一定是high | **HIGH** | 2-ptr-read2swap-unsafe-high.rs |
-| 14 | ptr::write | 1: 基础使用 | LOW  | 1-ptr-simple-unsafe.rs |
-| - | ptr::write | 2: swap | **HIGH**  | 2-ptr-write2swap-unsafe-high.rs |
-| 15 | ptr:: write | 
+| 13 | ptr::write | 1: 基础 | LOW  | 1-ptr-simple-unsafe.rs |
+| - | ptr::write | 2: swap |   | 2-ptr-write2swap-unsafe-high.rs |
+| 14 | ptr:: write | 
 | - | ptr::write_unaligned |
-| 16 | set_len | 1: 用setlen创建一个vec给ffi用，无法替换 | **HIGH** | 1-vec-ffi-unsafe-high.rs |
-| -  |set_len | 2: 基础使用，但是这个有使用目的，vec的capacity是确定的，但是vec是翻倍增长的，这个例子用来缩掉vec不用的长度，resize | **HIGH** | 2-vec-shorten-unsafe-high.rs |
-| 17 | offset_from | 1: misused 与普通版其实没区别，都是基础使用 | low | 1-misused-ptr-mut-unsafe-low.rs <br> 1-ptr-mut-unsafe-low.rs <br>1-ptr-simple-unsafe-low.rs |
+| 15 | set_len | 1: vector extention: initialize the content and increase the length |  May | new or push  |
+| - | set_len | 2: vector extension: increase the length and then initialize the content, similar to mem::uninitialized |  May | new or push or pattern 1  |
+| -  |set_len | 3: vector shrink: derease the length and then destruct the content |  May | pop/remove | 
+| -  |set_len | 4: vector shrink: destruct the content and then derease the length |  May | pop/remove | 
+| 16 | offset_from | 1: misused 与普通版其实没区别，都是基础使用 | low | 1-misused-ptr-mut-unsafe-low.rs <br> 1-ptr-mut-unsafe-low.rs <br>1-ptr-simple-unsafe-low.rs |
+| 17 | * (raw_ptr_deref) | | |  |
 | 18 | as_ref | 1: 都是原子操作，case中有3份存疑，它们不是unsafe | LOW  |1-ptr-mut-unsafe-low.rs <br> 1-ptr-nn-unsafe-low.rs <br> 1-ptr-simple-unsafe-low.rs <br> 1-ptr-unchecked-unsafe-low.rs <br> 1-ptr-uncheckedmut-unsafe-low.rs <br>Q | 
-| 19 | * (raw_ptr_deref) | | |  |
-
 
 ### Unsafe APIs that can hardly be replaced: 
 
