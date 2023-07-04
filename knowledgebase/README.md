@@ -34,7 +34,6 @@
 | -  | Vec::from_raw_parts | 3: from other Rust objects | Y | 3-frommem-unsafe.rs |
 | -  | Vec::from_raw_parts | 4: Ownership issue: use as_ptr instead | Y |  4-ownership-unsafe.rs |
 | -  | Vec::from_raw_parts | 5: Modify Vec contents | Y | 5-iteminc-unsafe.rs|
-| - | Vec::from_raw_parts_in | 2: 这个api和上面的Vec::from_raw_parts问题一模一样 | **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
 | 4* | CString::from_raw | 1: Raw ptr parameter | N |  new1-fromffi-unsafe.rs,new1-fromraw-unsafe.rs|
 | -  | CString::from_raw | 2: Returned raw ptr | N |   |
 | -  | CString::from_raw | 3: to other Rust objects | Y |   |
