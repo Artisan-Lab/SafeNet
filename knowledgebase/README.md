@@ -21,10 +21,9 @@
 |---------|---------|---------|---------|---------|
 | 1* | Box::from_raw | 1: Function parameters: raw | Y | 1-funparraw-unsafe.rs |
 | -  | Box::from_raw | 2: Function parameters: self | M | 2-dropself-unsafe.rs |
-| -  | Box::from_raw | 3: Raw ptr parameter | N | 3-fromraw-unsafe.rs|
-| -  | Box::from_raw | 4: Returned raw ptr | N |  4-dropraw-unsafe.rs |
+| -  | Box::from_raw | 3: Returned raw ptr | N |  3-dropraw-unsafe.rs |
+| -  | Box::from_raw | 4: Raw ptr parameter | N | 4-fromraw-unsafe.rs|
 | -  | Box::from_raw | 5: to other Rust objects | Y |  5-tostr-unsafe.rs,5-tovec-unsafe.rs |
-| -  | Box::from_raw | 4: Ownership issue: use as_ptr instead | Y | new4-coersion-unsafe.rs,new4-copycoersion-unsafe.rs |
 | -  | Box::from_raw | 6: Modify Box contents | Y | 6-modify-unsafe.rs |
 | 2* | CStr::from_ptr | 1: From an FFI returned raw ptr | N |  1-cstrfromffi-unsafe.rs | 
 | - | CStr::from_ptr | 2: Create a new CStr | Y |  2-createcstr-unsafe.rs| 

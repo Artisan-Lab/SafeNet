@@ -6,11 +6,11 @@ fn process_raw(raw: *mut i32) {
     
 }
 
-fn main() {
+// fn main() {
 
-    let boxed_value = Box::new(42);
-    let raw_ptr = Box::into_raw(boxed_value);
+//     let boxed_value = Box::new(42);
+//     let raw_ptr = Box::into_raw(boxed_value);
     
-    process_raw(raw_ptr);
+//     process_raw(raw_ptr);
 
-}
+// }
