@@ -17,7 +17,7 @@
 
 ### Unsafe APIs that need machine learning: 
 
-| ID | API | Pattern ID: Discription | Replaceable? | Case | 
+| ID | API | Pattern ID: Discription | Replaceable? | Replacement Strategy | 
 |---------|---------|---------|---------|---------|
 | 1* | Box::from_raw | 1: Function parameters: raw | N | 1-funparraw-unsafe.rs |
 | -  | Box::from_raw | 2: Function parameters: self | M | 2-dropself-unsafe.rs |
@@ -67,20 +67,23 @@
 | - | mem::transmute | 4: convert raw to ref  | N | Y | 4-raw2own-unsafe.rs |
 | - | mem::transmute | 5: modify lifetimes | M | Y | 5-lifetimeextend-unsafe.rs，5-lifetimeshrink-unsafe.rs |
 | - | mem::transmute | 6: Maybeuninit to init | N | Y | 6-maybeuninit-unsafe.rs |
-| 9 | ptr::copy |
-| 10 | ptr::copy_nonoverlapping |
-| 11 | ptr::drop_in_place |
-| 12 | ptr::read | 1: 基础使用,其中 所有权与这个例子无关，目的是指针位置读取，所以这两个是同一个pattern | low | 1-ptr-ownership-unsafe-low.rs <br> 1-ptr-simple-unsafe-low.rs | 
-| - | ptr::read | 2: 通过read来进行变量交换，memswap是一个避开所有权冲突的使用方法，所以存在何时使用memswap的问题，这个一定是high | **HIGH** | 2-ptr-read2swap-unsafe-high.rs |
-| 13 | ptr::write | 1: 基础 | LOW  | 1-ptr-simple-unsafe.rs |
-| - | ptr::write | 2: swap |   | 2-ptr-write2swap-unsafe-high.rs |
-| 14 | ptr:: write | 
-| - | ptr::write_unaligned |
+| 9 | ptr::copy | 1: the ref/owner is already available in the current function (misused) | Y  |  | 
+| - | ptr::copy | 2: only the raw ptr is available in the current function | N | | 
+| 10 | ptr::copy_nonoverlapping || 1: the ref/owner is already available in the current function (misused) | Y  |  | 
+| - | ptr::copy_nonoverlapping | 2: only the raw ptr is available in the current function | N | | 
+| 11 | ptr::read | 1: the ref/owner is already available in the current function (misused) | Y  |  | 
+| - | ptr::read | 2: only the raw ptr is available in the current function | N | | 
+| 12 | ptr::write | 1: the ref/owner is already available in the current function (misused) | Y  |  | 
+| - | ptr::write | 2: only the raw ptr is available in the current function | N | | 
+| 13 | ptr::write_bytes | 1: the ref/owner is already available in the current function (misused) | Y  |  | 
+| - | ptr::write_bytes | 2: only the raw ptr is available in the current function | N | | 
+| 14 | ptr::drop_in_place |
 | 15 | set_len | 1: vector extention: initialize the content and increase the length |  May | new or push  |
 | - | set_len | 2: vector extension: increase the length and then initialize the content, similar to mem::uninitialized |  May | new or push or pattern 1  |
 | -  |set_len | 3: vector shrink: derease the length and then destruct the content |  May | pop/remove | 
 | ?  |set_len | 4: vector shrink: destruct the content and then derease the length |  May | pop/remove | 
-| 16 | offset_from | 1: misused 与普通版其实没区别，都是基础使用 | low | 1-misused-ptr-mut-unsafe-low.rs <br> 1-ptr-mut-unsafe-low.rs <br>1-ptr-simple-unsafe-low.rs |
+| 16 | offset_from | 1: the ref/owner is already available in the current function (misused) | Y  |  | 
+| - | offset_from | 2: only the raw ptr is available in the current function | N | | 
 | 17 | * (raw_ptr_deref) | 1: the ref/owner is already available in the current function (misused) | Y  |  | 
 | - | raw_ptr_deref  | 2: only the raw ptr is available in the current function, and accessing the content is needed | N | | 
 | 18 | as_ref | 1: the ref/owner is already available in the current function | Y  |  |
