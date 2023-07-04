@@ -1,7 +1,7 @@
 #![allow(unused)]
 use std::mem;
 
-//#[derive(Default)]
+#[derive(Default)]
 struct MyStruct {
     value: u32,
     flag: bool,
@@ -9,7 +9,7 @@ struct MyStruct {
 }
 
 fn main() {
-    let mut my_struct: MyStruct = unsafe { mem::zeroed() };
+    let mut my_struct: MyStruct = Default::default();
     my_struct.value = 42;
     println!("Value: {}", my_struct.value);
 }
