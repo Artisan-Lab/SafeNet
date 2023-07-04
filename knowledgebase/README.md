@@ -17,41 +17,43 @@
 
 ### Unsafe APIs that need machine learning: 
 
-| ID | API | Pattern ID: Discription | Replaceable? | Practical? | Case | 
-|---------|---------|---------|---------|---------|---------|
-| 1* | Box::from_raw | 1: Raw ptr parameter | N | Y | new1-fromraw-unsafe.rs|
-| -  | Box::from_raw | 2: Returned raw ptr | N | Y | new2-dropraw-unsafe.rs |
-| -  | Box::from_raw | 3: to other Rust objects | Y | Y | new3-tostr-unsafe.rs,new3-tovec-unsafe.rs |
-| -  | Box::from_raw | 4: Ownership issue: use as_ptr instead | Y | Y | new4-coersion-unsafe.rs,new4-copycoersion-unsafe.rs |
-| -  | Box::from_raw | 5: Modify Box contents | Y | Y | new5-modify-unsafe.rs |
-| -  | Box::from_raw | 6: Function parameters: raw | Y | Y | new6-funparraw-unsafe.rs |
-| -  | Box::from_raw | 7: Function parameters: self | M | Y | new7-dropself-unsafe.rs |
-| 2* | CStr::from_ptr | 1: From an FFI returned raw ptr | N | Y | 1-cstrfromffi-unsafe.rs | 
-| - | CStr::from_ptr | 2: Create a new CStr | Y | Y | 2-createcstr-unsafe.rs| 
-| - | CStr::from_ptr | 3: Raw ptr parameter | N | Y | 3-cstrfromptr-unsafe.rs | 
-| 3 | Vec::from_raw_parts | 1: Raw ptr parameter | N | Y | 1-fromraw-unsafe.rs |
-| -  | Vec::from_raw_parts | 2: Returned raw ptr | N | Y | 2-fromres-unsafe.rs |
-| -  | Vec::from_raw_parts | 3: from other Rust objects | Y | Y | 3-frommem-unsafe.rs |
-| -  | Vec::from_raw_parts | 4: Ownership issue: use as_ptr instead | Y | Y | 4-ownership-unsafe.rs |
-| -  | Vec::from_raw_parts | 5: Modify Vec contents | Y | Y | 5-iteminc-unsafe.rs|
+| ID | API | Pattern ID: Discription | Replaceable? | Case | 
+|---------|---------|---------|---------|---------|
+| 1* | Box::from_raw | 1: Function parameters: raw | Y | 1-funparraw-unsafe.rs |
+| -  | Box::from_raw | 2: Function parameters: self | M | 2-dropself-unsafe.rs |
+| -  | Box::from_raw | 3: Raw ptr parameter | N | 3-fromraw-unsafe.rs|
+| -  | Box::from_raw | 4: Returned raw ptr | N |  4-dropraw-unsafe.rs |
+| -  | Box::from_raw | 5: to other Rust objects | Y |  5-tostr-unsafe.rs,5-tovec-unsafe.rs |
+| -  | Box::from_raw | 4: Ownership issue: use as_ptr instead | Y | new4-coersion-unsafe.rs,new4-copycoersion-unsafe.rs |
+| -  | Box::from_raw | 6: Modify Box contents | Y | 6-modify-unsafe.rs |
+| 2* | CStr::from_ptr | 1: From an FFI returned raw ptr | N |  1-cstrfromffi-unsafe.rs | 
+| - | CStr::from_ptr | 2: Create a new CStr | Y |  2-createcstr-unsafe.rs| 
+| - | CStr::from_ptr | 3: Raw ptr parameter | N | 3-cstrfromptr-unsafe.rs | 
+| 3 | Vec::from_raw_parts | 1: Raw ptr parameter | N | 1-fromraw-unsafe.rs |
+| -  | Vec::from_raw_parts | 2: Returned raw ptr | N |  2-fromres-unsafe.rs |
+| -  | Vec::from_raw_parts | 3: from other Rust objects | Y | 3-frommem-unsafe.rs |
+| -  | Vec::from_raw_parts | 4: Ownership issue: use as_ptr instead | Y |  4-ownership-unsafe.rs |
+| -  | Vec::from_raw_parts | 5: Modify Vec contents | Y | 5-iteminc-unsafe.rs|
 | - | Vec::from_raw_parts_in | 2: 这个api和上面的Vec::from_raw_parts问题一模一样 | **HIGH**  | 1-frommem-unsafe-high.rs <br> 1-iteminc-unsafe-high.rs |
-| 4* | CString::from_raw | 1: Raw ptr parameter | N | Y | new1-fromffi-unsafe.rs,new1-fromraw-unsafe.rs|
-| -  | CString::from_raw | 2: Returned raw ptr | N | Y |  |
-| -  | CString::from_raw | 3: to other Rust objects | Y | Y |  |
-| -  | CString::from_raw | 4: Ownership issue: Retake the ownership after FFI | N | Y | new4-retakeffi-unsafe.rs |
-| -  | CString::from_raw | 5: Modify CString contents | Y | Y | new5-modify-unsafe.rs |
-| -  | CString::from_raw | 6: Function parameters: raw | Y | Y |  |
-| -  | CString::from_raw | 7: Function parameters: self | M | Y |  |
-| 5* | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | M | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
-| - | Rc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
-| - | Rc::from_raw | 3: Create Rc\<B\> from A: replaceable, Convert A to B first | Y | Y | 3-coersion-unsafe.rs | 
-| - | Rc::from_raw | 4: &self parameter: depends on Copy or Clone | M | Y | 4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
-| 6 | mem::uninitialized |1: create and init in the same function | Y | |
-| - | mem:: uninitialized | 2: create and init in another function with ref | N | |
-| - | mem:: uninitialized | 3: create and init in another function with raw ptr | with MaybeUninit | |
-| 7 | mem::zeroed | 1: create and init in the same function | Y | |
-| - | mem::zeroed | 2: create and init in another function with ref  | N | |
-| - | mem::zeroed | 3: create and init in another function with raw ptr | with MaybeUninit | |
+| 4* | CString::from_raw | 1: Raw ptr parameter | N |  new1-fromffi-unsafe.rs,new1-fromraw-unsafe.rs|
+| -  | CString::from_raw | 2: Returned raw ptr | N |   |
+| -  | CString::from_raw | 3: to other Rust objects | Y |   |
+| -  | CString::from_raw | 4: Ownership issue: Retake the ownership after FFI | N | new4-retakeffi-unsafe.rs |
+| -  | CString::from_raw | 5: Modify CString contents | Y | new5-modify-unsafe.rs |
+| -  | CString::from_raw | 6: Function parameters: raw | Y |  |
+| -  | CString::from_raw | 7: Function parameters: self | M |  |
+| 5* | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | 1-box2rc-unsafe.rs, 1-vec2rc-unsafe.rs, 1-String2rc-unsafe.rs | 
+| - | Rc::from_raw | 2: Raw ptr parameter: irreplaceable | N |2-rawptr-unsafe.rs | 
+| - | Rc::from_raw | 3: Create Rc\<B\> from A: replaceable, Convert A to B first | Y | 3-coersion-unsafe.rs | 
+| - | Rc::from_raw | 4: &self parameter: depends on Copy or Clone | M |4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
+| 6 | mem::uninitialized | 1: The function with Rust primitive types | Y (#derive[Default)| ] | |
+| - | mem::uninitialized | 2: create and init in the same function | Y | |
+| - | mem:: uninitialized | 3: create and init in another function with ref | N | |
+| - | mem:: uninitialized | 4: create and init in another function with raw ptr | with MaybeUninit | |
+| 7 | mem::zeroed | 1: The function with Rust primitive types | Y (#derive[Default)| ] | |
+| 2 | mem::zeroed | 2: create and init in the same function | Y | |
+| - | mem::zeroed | 3: create and init in another function with ref  | N | |
+| - | mem::zeroed | 4: create and init in another function with raw ptr | with MaybeUninit | |
 | 8* | assume_init | 1: Create uninit and then init | Y | Y  | 1-box-unsafe.rs, 1-rc-unsafe.rs, 1-arc-unsafe-low.rs, ... | 
 | - | assume_init | 2: MaybeUninit parameter  | N | Y |  2-mayi32-unsafe.rs |
 | - | assume_init | 3: MaybeUninit retvalue  | N | Y |  3-retmay-unsafe.rs |
