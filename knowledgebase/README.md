@@ -46,12 +46,14 @@
 | - | Rc::from_raw | 2: Raw ptr parameter: irreplaceable | N | Y | 2-rawptr-unsafe.rs | 
 | - | Rc::from_raw | 3: Create Rc\<B\> from A: replaceable, Convert A to B first | Y | Y | 3-coersion-unsafe.rs | 
 | - | Rc::from_raw | 4: &self parameter: depends on Copy or Clone | M | Y | 4-selfclone2rc-unsafe.rs, 4-selfclone2rc-unsafe.rs|
-| 6 | mem::uninitialized |1: create and init in the same function | Y | |
-| - | mem:: uninitialized | 2: create and init in another function with ref | N | |
-| - | mem:: uninitialized | 3: create and init in another function with raw ptr | with MaybeUninit | |
-| 7 | mem::zeroed | 1: create and init in the same function | Y | |
-| - | mem::zeroed | 2: create and init in another function with ref  | N | |
-| - | mem::zeroed | 3: create and init in another function with raw ptr | with MaybeUninit | |
+| 6 | mem::uninitialized | 1: The function with Rust primitive types | Y (#derive[Default)| ] | |
+| - | mem::uninitialized | 2: create and init in the same function | Y | |
+| - | mem:: uninitialized | 3: create and init in another function with ref | N | |
+| - | mem:: uninitialized | 4: create and init in another function with raw ptr | with MaybeUninit | |
+| 7 | mem::zeroed | 1: The function with Rust primitive types | Y (#derive[Default)| ] | |
+| 2 | mem::zeroed | 2: create and init in the same function | Y | |
+| - | mem::zeroed | 3: create and init in another function with ref  | N | |
+| - | mem::zeroed | 4: create and init in another function with raw ptr | with MaybeUninit | |
 | 8* | assume_init | 1: Create uninit and then init | Y | Y  | 1-box-unsafe.rs, 1-rc-unsafe.rs, 1-arc-unsafe-low.rs, ... | 
 | - | assume_init | 2: MaybeUninit parameter  | N | Y |  2-mayi32-unsafe.rs |
 | - | assume_init | 3: MaybeUninit retvalue  | N | Y |  3-retmay-unsafe.rs |
