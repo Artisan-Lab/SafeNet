@@ -1,18 +1,7 @@
-/*
-    From: https://github.com/servo/servo/blob/f034eb60323c1501ba00e86cb7c2de243f41b56c/components/to_shmem/lib.rs#L286
-*/
-
-fn to_shmem(&self, builder: &mut SharedMemoryBuilder) -> Result<Self> {
-     // Reserve space for the boxed value.
-    let dest: *mut T = builder.alloc_value();
-
-    // Make a clone of the boxed value with all of its heap allocations
-    // placed in the shared memory buffer.
-    let value = (**self).to_shmem(builder)?;
-
+fn drop(&mut self) {
     unsafe {
-        // Copy the value into the buffer.
-        ptr::write(dest, ManuallyDrop::into_inner(value));
-        Ok(ManuallyDrop::new(Box::from_raw(dest)))
+        llvm::LLVMRustContextSetDiagnosticHandler(self.llcx, self.old_handler);
+        drop(Box::from_raw(self.data));
     }
 }
+// https://github.com/crablang/crab/blob/71a7fcd549f5db917f626c22db17f74b04a65f47/compiler/rustc_codegen_llvm/src/back/write.rs#L318
