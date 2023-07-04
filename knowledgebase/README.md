@@ -30,7 +30,7 @@
 | -  | CStr::from_ptr | 3: Returned raw ptr | N |  3-creatcstr-unsafe.rs,3-cstrfromffi-unsafe.rs,3-fromstring-unsafe.rs |
 | -  | CStr::from_ptr | 4: Used by another func | Y | 4-resraw-unsafe.rs,4-resraw2-unsafe.rs|
 | -  | CStr::from_ptr | 5: to other Rust objects | Y | 5-cstrtobox-unsafe.rs |
-| -  | CStr::from_ptr | 6: Modify Box contents | Y | 6-modify-unsafe.rs |
+| -  | CStr::from_ptr | 6: Modify contents | Y | 6-modify-unsafe.rs |
 | 3* | Vec::from_raw_parts | 1: Function parameters: raw | N | 1-funparraw-unsafe.rs |
 | -  | Vec::from_raw_parts | 2: Function parameters: self | M |  2-funparself-unsafe.rs |
 | -  | Vec::from_raw_parts | 3: Returned raw ptr | N | 3-returnbyother-unsafe.rs |
@@ -42,13 +42,13 @@
 | -  | CString::from_raw | 3: Returned raw ptr | N |  3-fromfoo-unsafe.rs |
 | -  | CString::from_raw | 4: Used by another func | Y | 4-retakeffi-unsafe.rs|
 | -  | CString::from_raw | 5: to other Rust objects | Y | 5-cstrtoboxstr-unsafe.rs,5-vectostr-unsafe.rs  |
-| -  | CString::from_raw | 6: Modify Box contents | Y | 6-modify-unsafe.rs |
+| -  | CString::from_raw | 6: Modify contents | Y | 6-modify-unsafe.rs |
 | 5* | Rc::from_raw | 1: Straightforward: replaceable with Rc::new | Y | 1-rawptr-unsafe.rs | 
 | -  | Rc::from_raw |  Function parameters: raw | M | 2-selfcopy2rc-unsafe.rs,2-selfclone2rc-unsafe.rs |
 | -  | Rc::from_raw | 3: Returned raw ptr | N | 3-fromraw-unsafe.rs |
 | -  | Rc::from_raw | 4: Used by another func | Y | 4-vec2rc-unsafe.rs,4-box2rc-unsafe.rs,4-String2rc-unsafe.rs|
 | -  | Rc::from_raw | 5: to other Rust objects | Y | 5-coersion-unsafe.rs  |
-| -  | Rc::from_raw | 6: Modify Box contents | Y | 6-modify-unsafe.rs |
+| -  | Rc::from_raw | 6: Modify contents | Y | 6-modify-unsafe.rs |
 | 6 | mem::uninitialized | 1: The function with Rust primitive types | Y (#derive[Default)| ] | |
 | - | mem::uninitialized | 2: create and init in the same function | Y | |
 | - | mem:: uninitialized | 3: create and init in another function with ref | N | |
