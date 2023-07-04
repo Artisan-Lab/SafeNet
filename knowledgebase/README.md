@@ -68,10 +68,13 @@
 | 15 | set_len | 1: vector extention: initialize the content and increase the length |  May | new or push  |
 | - | set_len | 2: vector extension: increase the length and then initialize the content, similar to mem::uninitialized |  May | new or push or pattern 1  |
 | -  |set_len | 3: vector shrink: derease the length and then destruct the content |  May | pop/remove | 
-| -  |set_len | 4: vector shrink: destruct the content and then derease the length |  May | pop/remove | 
+| ?  |set_len | 4: vector shrink: destruct the content and then derease the length |  May | pop/remove | 
 | 16 | offset_from | 1: misused 与普通版其实没区别，都是基础使用 | low | 1-misused-ptr-mut-unsafe-low.rs <br> 1-ptr-mut-unsafe-low.rs <br>1-ptr-simple-unsafe-low.rs |
-| 17 | * (raw_ptr_deref) | | |  |
-| 18 | as_ref | 1: 都是原子操作，case中有3份存疑，它们不是unsafe | LOW  |1-ptr-mut-unsafe-low.rs <br> 1-ptr-nn-unsafe-low.rs <br> 1-ptr-simple-unsafe-low.rs <br> 1-ptr-unchecked-unsafe-low.rs <br> 1-ptr-uncheckedmut-unsafe-low.rs <br>Q | 
+| 17 | * (raw_ptr_deref) | 1: the ref/owner is already available in the current function (misused) | Y  |  | 
+| - | raw_ptr_deref  | 2: only the raw ptr is available in the current function, and accessing the content is needed | N | | 
+| 18 | as_ref | 1: the ref/owner is already available in the current function | Y  |  |
+| - | as_ref | 2: only the raw ptr is available in the current function, and the ref is needed | N | | 
+| ? | as_ref | 3: only the raw ptr is available in the current function, and the ref is not needed | Y | | 
 
 ### Unsafe APIs that can hardly be replaced: 
 
