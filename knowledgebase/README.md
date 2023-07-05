@@ -81,7 +81,7 @@
 | 15 | set_len | 1: reserve space, init via another function, and then set len | May | new or push  |
 | - | set_len | 2: reserve space, set len, and then init via another function |  Should | at least pattern 1  |
 | -  |set_len | 3: vector shrink: to avoid dual ownership | Hard | pop/remove | 
-| ?  |set_len | 4: used in the cleanup function | Hard | pop/remove | 
+| ?  |set_len | used in the cleanup function (temporarily ignore this minor category) | Hard | pop/remove | 
 | 16 | offset_from | 1: the ref/owner is already available in the current function (misused) | Y  |  | 
 | - | offset_from | 2: only the raw ptr is available in the current function | N | | 
 | 17 | * (raw_ptr_deref) | 1: the ref/owner is already available in the current function (misused) | Y  |  | 
