@@ -1,41 +1,40 @@
-  /*
-  https://github.com/denoland/deno/blob/4a18c761351dccb146973793cf22e6efffff18bf/cli/napi/js_native_api.rs#L781
-  */
+pub fn uumain(args: impl uucore::Args) -> UResult<()> {
+    let args = args
+        .collect_str(InvalidEncodingHandling::ConvertLossy)
+        .accept_any();
 
-fn napi_create_string_latin1(
-    env: *mut Env,
-    string: *const u8,
-    length: usize,
-    result: *mut napi_value,
-  ) -> napi_status {
-    check_env!(env);
-    let env = unsafe { &mut *env };
-    if length > 0 {
-      check_arg!(env, string);
+    let matches = uu_app().get_matches_from(args);
+
+    let silent = matches.contains_id(options::SILENT);
+
+    // Call libc function ttyname
+    let tty = unsafe {
+        let ptr = libc::ttyname(libc::STDIN_FILENO);
+        if !ptr.is_null() {
+            String::from_utf8_lossy(CStr::from_ptr(ptr).to_bytes()).to_string()
+        } else {
+            "".to_owned()
+        }
+    };
+
+    let mut stdout = std::io::stdout();
+
+    if !silent {
+        let write_result = if !tty.chars().all(|c| c.is_whitespace()) {
+            writeln!(stdout, "{}", tty)
+        } else {
+            writeln!(stdout, "not a tty")
+        };
+        if write_result.is_err() || stdout.flush().is_err() {
+            // Don't return to prevent a panic later when another flush is attempted
+            // because the `uucore_procs::main` macro inserts a flush after execution for every utility.
+            std::process::exit(3);
+        }
     }
-    check_arg!(env, result);
-    return_status_if_false!(
-      env,
-      (length == NAPI_AUTO_LENGTH) || length <= INT_MAX as _,
-      napi_invalid_arg
-    );
-  
-    let string = if length == NAPI_AUTO_LENGTH {
-      std::ffi::CStr::from_ptr(string as *const _)
-        .to_str()
-        .unwrap()
-        .as_bytes()
+
+    if atty::is(atty::Stream::Stdin) {
+        Ok(())
     } else {
-      std::slice::from_raw_parts(string, length)
-    };
-    let Some(v8str) = v8::String::new_from_one_byte(
-      &mut env.scope(),
-      string,
-      v8::NewStringType::Normal,
-    ) else {
-      return napi_generic_failure;
-    };
-    *result = v8str.into();
-  
-    napi_ok
-  }
+        Err(libc::EXIT_FAILURE.into())
+    }
+}

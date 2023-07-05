@@ -1,13 +1,14 @@
-unsafe extern "C" fn translate(name: *const c_char, locale: *const c_char) -> *const c_char {
-    let name = CStr::from_ptr(name);
-    let locale = CStr::from_ptr(locale);
-    let res = if let (Ok(name), Ok(locale)) = (name.to_str(), locale.to_str()) {
-        crate::client::translate_locale(name.to_owned(), locale)
-    } else {
-        String::new()
+pub fn resources_dir_path() -> io::Result<PathBuf> {
+    let mut dir = CMD_RESOURCE_DIR.lock().unwrap();
+
+    if let Some(ref path) = *dir {
+        return Ok(PathBuf::from(path));
+    }
+
+    let data_path = unsafe {
+        CStr::from_ptr((*android_injected_glue::get_app().activity).externalDataPath)
     };
-    CString::from_vec_unchecked(res.into_bytes()).into_raw()
+    let path = PathBuf::from(data_path.to_str().unwrap());
+    *dir = Some(path.to_str().unwrap().to_owned());
+    Ok(path)
 }
-/*
-https://github.com/rustdesk/rustdesk/blob/50c1015e8651c622f7539956d24ca427b4a45cf8/src/flutter_ffi.rs#L1279
-*/
