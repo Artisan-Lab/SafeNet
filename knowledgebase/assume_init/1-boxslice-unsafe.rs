@@ -13,5 +13,5 @@ fn main() {
         values[2].as_mut_ptr().write(3);
         values.assume_init()
     };
-    assert_eq!(*values, [1, 2, 3])
+    // assert_eq!(*values, [1, 2, 3])
 }

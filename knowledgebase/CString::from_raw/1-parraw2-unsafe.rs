@@ -7,9 +7,7 @@ use std::os::raw::c_char;
 
 // impl MyStruct {
     fn new_from_raw(raw_ptr: *const c_char) -> Self {
-        // 使用CString::from_raw将原始指针转换为CString对象
         let cstring = unsafe { CString::from_raw(raw_ptr as *mut c_char) };
-
         Self { cstring }
     }
 // }

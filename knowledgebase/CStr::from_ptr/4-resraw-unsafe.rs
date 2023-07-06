@@ -10,7 +10,7 @@ fn process_cstr(cstr_ref: &str) {
 
 }
 
-fn main() {
-    let str_value = "Hello, World!";
-    process_cstr(str_value);
-}
+// fn main() {
+//     let str_value = "Hello, World!";
+//     process_cstr(str_value);
+// }

@@ -18,5 +18,5 @@ fn main() {
         unsafe { uninit.assume_init() }
     };
 
-    assert_eq!( foo, Foo {name: "Bob".to_string(), list: vec![0, 1, 2]});
+    // assert_eq!( foo, Foo {name: "Bob".to_string(), list: vec![0, 1, 2]});
 }

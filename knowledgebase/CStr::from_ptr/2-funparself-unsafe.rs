@@ -4,10 +4,10 @@ use std::ffi::CStr;
 //     c_string: *const i8,
 // }
 
-impl MyStruct {
-    fn new(c_string: *const i8) -> MyStruct {
-        MyStruct { c_string }
-    }
+// impl MyStruct {
+//     fn new(c_string: *const i8) -> MyStruct {
+//         MyStruct { c_string }
+//     }
 
     fn process_string(&self) {
         let c_str = unsafe { CStr::from_ptr(self.c_string) };
@@ -15,7 +15,7 @@ impl MyStruct {
 
         println!("String: {}", rust_str);
     }
-}
+// }
 
 // fn main() {
 //     let c_string = "Hello, World!\0".as_ptr() as *const i8;

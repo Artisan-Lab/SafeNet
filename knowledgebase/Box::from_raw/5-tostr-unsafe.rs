@@ -4,7 +4,7 @@ fn main() {
     let boxed_data: Box<[u8]> = unsafe { Box::from_raw(raw_ptr) };
     let string_data = String::from_utf8_lossy(&boxed_data).to_string();
 
-    println!("Value: {}", string_data);
+    // println!("Value: {}", string_data);
 
 }
 

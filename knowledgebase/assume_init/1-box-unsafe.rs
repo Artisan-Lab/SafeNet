@@ -11,5 +11,5 @@ fn main() {
         five.as_mut_ptr().write(5);
         five.assume_init()
     };
-    assert_eq!(*five, 5)
+    // assert_eq!(*five, 5)
 }

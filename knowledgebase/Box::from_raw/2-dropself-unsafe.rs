@@ -46,7 +46,7 @@ impl<T> DoublyLinkedList<T> {
         }
     }
 }
-*/
+
 impl<T> Drop for DoublyLinkedList<T> {
 */
     fn drop(&mut self) {

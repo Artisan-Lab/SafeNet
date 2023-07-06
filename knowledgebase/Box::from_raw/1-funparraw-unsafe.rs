@@ -2,7 +2,7 @@ fn process_raw(raw: *mut i32) {
 
     let boxed_value = unsafe { Box::from_raw(raw) };
     let value = *boxed_value;
-    println!("Value: {}", value);
+    // println!("Value: {}", value);
     
 }
 

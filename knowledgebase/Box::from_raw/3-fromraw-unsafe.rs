@@ -5,6 +5,6 @@ fn main() {
 
 }
 
-fn create_raw_ptr() -> *mut i32 {
-    Box::into_raw(Box::new(42))
-}
+// fn create_raw_ptr() -> *mut i32 {
+//     Box::into_raw(Box::new(42))
+// }

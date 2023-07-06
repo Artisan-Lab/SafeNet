@@ -14,6 +14,6 @@ fn main() {
     }
     let modified_rc_data = unsafe { Rc::from_raw(raw_ptr) };
 
-    println!("{:?}", modified_rc_data); 
+    // println!("{:?}", modified_rc_data); 
 
 }

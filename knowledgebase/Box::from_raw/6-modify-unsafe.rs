@@ -5,7 +5,7 @@ fn main() {
 
     *boxed_data += 10;
 
-    println!("Value: {}", *boxed_data);
+    // println!("Value: {}", *boxed_data);
 
 }
 

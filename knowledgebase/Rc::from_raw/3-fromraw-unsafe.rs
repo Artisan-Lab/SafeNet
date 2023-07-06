@@ -1,15 +1,15 @@
-use std::rc::Rc;
+// use std::rc::Rc;
 
-struct Data {
-    value: i32,
-}
+// struct Data {
+//     value: i32,
+// }
 
-impl Data {
-    fn new(value: i32) -> *mut Data {
-        let data = Box::new(Data { value });
-        Box::into_raw(data)
-    }
-}
+// impl Data {
+//     fn new(value: i32) -> *mut Data {
+//         let data = Box::new(Data { value });
+//         Box::into_raw(data)
+//     }
+// }
 
 fn main() {
 

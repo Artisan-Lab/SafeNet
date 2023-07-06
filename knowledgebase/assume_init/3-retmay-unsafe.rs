@@ -8,5 +8,5 @@ fn foo<T>() -> MaybeUninit<T> {
 fn main() {
     let value: MaybeUninit<u32> = foo();
     let initialized_value = unsafe { value.assume_init() };
-    println!("Initialized value: {}", initialized_value);
+    // println!("Initialized value: {}", initialized_value);
 }

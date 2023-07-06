@@ -7,6 +7,6 @@ fn main() {
     let rust_string = c_str.to_str().expect("Invalid UTF-8");
     let boxed_string = unsafe { Box::from_raw(c_string_ptr as *mut c_char) };
 
-    println!("Boxed String: {}", boxed_string);
+    // println!("Boxed String: {}", boxed_string);
 
 }

@@ -12,5 +12,5 @@ fn main() {
     let mut uninitialized_value = MaybeUninit::<i32>::uninit();
     init_value(&mut uninitialized_value);
     let initialized_value = unsafe { uninitialized_value.assume_init() };
-    println!("Initialized value: {}", initialized_value);
+    // println!("Initialized value: {}", initialized_value);
 }

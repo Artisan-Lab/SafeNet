@@ -12,5 +12,5 @@ fn main() {
         make_vec(v.as_mut_ptr());
     }
     let v = unsafe { v.assume_init() };
-    assert_eq!(&v, &[1, 2, 3]);
+    // assert_eq!(&v, &[1, 2, 3]);
 }
