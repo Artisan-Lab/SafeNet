@@ -14,5 +14,4 @@ pub unsafe fn update_buffer(&mut self, data: Vec<u8>) {
     *write_ptr = data.len().saturating_sub(1) as _; // []
     std::mem::forget(data);
 }
-
-https://github.com/freenet/locutus/blob/c8586ed72a93b0aa24d549e7b1a4e97bf8d3d025/crates/locutus-stdlib/src/buf.rs#L45
+// https://github.com/freenet/locutus/blob/c8586ed72a93b0aa24d549e7b1a4e97bf8d3d025/crates/locutus-stdlib/src/buf.rs#L45

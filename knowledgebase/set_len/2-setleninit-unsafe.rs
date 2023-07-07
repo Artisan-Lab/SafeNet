@@ -1,9 +1,9 @@
-fn foo(vec: &mut Vec<i32>) {
-    // Some initialization logic
-    for i in 0..vec.len() {
-        vec[i] = i as i32 + 1;
-    }
-}
+// fn foo(vec: &mut Vec<i32>) {
+//     // Some initialization logic
+//     for i in 0..vec.len() {
+//         vec[i] = i as i32 + 1;
+//     }
+// }
 
 fn main() {
     let mut my_vec: Vec<i32> = Vec::new();
