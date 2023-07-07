@@ -1,7 +1,0 @@
-06/21/2023 09:14:32 AM - INFO : running on device cuda
-06/21/2023 09:14:32 AM - INFO : Optimizer:AdamW
-06/21/2023 10:27:15 AM - INFO : epoch: 1 -- time: 4363.00s
-06/21/2023 11:39:51 AM - INFO : epoch: 2 -- time: 4356.33s
-06/21/2023 12:52:31 PM - INFO : epoch: 3 -- time: 4360.22s
-06/21/2023 14:09:30 PM - INFO : epoch: 4 -- time: 4618.10s
-06/21/2023 15:22:16 PM - INFO : epoch: 5 -- time: 4366.77s

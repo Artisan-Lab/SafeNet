@@ -318,7 +318,7 @@ if __name__ == '__main__':
     conf.update({
         'bert_path': r'/home/rose/code/similar/bert-base-uncased',
         'device': 'auto',
-        'epochs': 5 ,
+        'epochs': 20 ,
         'batch_size': 16,
         'num_workers': 0,
         'optim': 'AdamW',
