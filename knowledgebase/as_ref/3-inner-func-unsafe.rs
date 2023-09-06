@@ -7,6 +7,8 @@ fn process_inner_func(b: Box<i32>) {
     }
 }
 
+/*
 fn generate(b: Box<i32>) -> *mut i32 {
     Box::into_raw(b)
 }
+*/

@@ -8,7 +8,7 @@ fn to_shmem(&self, builder: &mut SharedMemoryBuilder) -> Result<Self> {
 
     // Make a clone of the boxed value with all of its heap allocations
     // placed in the shared memory buffer.
-    let value = (**self).to_shmem(builder)?;
+    // let value = (**self).to_shmem(builder)?;
 
     unsafe {
         // Copy the value into the buffer.

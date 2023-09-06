@@ -1,5 +1,5 @@
-#[cfg_attr(not(test), lang = "box_free")]
-#[inline]
+// #[cfg_attr(not(test), lang = "box_free")]
+// #[inline]
 // This signature has to be the same as `Box`, otherwise an ICE will happen.
 // When an additional parameter to `Box` is added (like `A: Allocator`), this has to be added here as
 // well.

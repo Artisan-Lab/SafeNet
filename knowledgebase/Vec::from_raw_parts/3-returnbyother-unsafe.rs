@@ -1,6 +1,6 @@
-#![allow(unused)]
+// #![allow(unused)]
 
-use std::mem;
+// use std::mem;
 
 // fn foo(v: &mut mem::ManuallyDrop<Vec<u8>>) -> (*mut u8, usize, usize) {
 //     let ptr = v.as_mut_ptr();

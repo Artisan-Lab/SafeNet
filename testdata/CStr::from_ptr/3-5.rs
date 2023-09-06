@@ -1,5 +1,5 @@
 pub fn running_under_wsl() -> bool {
-    #[cfg(unix)]
+    // #[cfg(unix)]
     unsafe {
         let mut name: libc::utsname = std::mem::zeroed();
         if libc::uname(&mut name) == 0 {

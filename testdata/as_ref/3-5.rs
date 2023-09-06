@@ -1,4 +1,3 @@
-use std::ptr::NonNull;
 pub extern "C" fn VtabRowid(
     arg1: *mut sqlite3_vtab_cursor,
 ) -> ::std::os::raw::c_int {

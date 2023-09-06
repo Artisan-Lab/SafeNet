@@ -1,5 +1,5 @@
-use std::ptr::NonNull;
 pub fn header(&self) -> &Header {
+    use std::ptr::NonNull;
     unsafe { self.ptr.as_ref() }
 }
 /*

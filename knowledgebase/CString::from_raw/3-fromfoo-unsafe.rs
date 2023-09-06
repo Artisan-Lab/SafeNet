@@ -1,5 +1,5 @@
-#![allow(unused)]
-use std::ffi::CString;
+// #![allow(unused)]
+// use std::ffi::CString;
 // use std::os::raw::c_char;
 
 // fn foo() -> *mut c_char {

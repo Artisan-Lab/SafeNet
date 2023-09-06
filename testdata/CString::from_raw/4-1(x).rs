@@ -30,14 +30,14 @@ pub fn server_format_list(
             })
             .collect::<Vec<CLIPRDR_FORMAT>>();
 
-        let format_list = CLIPRDR_FORMAT_LIST {
-            connID: conn_id as UINT32,
-            msgType: 0 as UINT16,
-            msgFlags: 0 as UINT16,
-            dataLen: 0 as UINT32,
-            numFormats: num_formats,
-            formats: formats.as_mut_ptr(),
-        };
+        // let format_list = CLIPRDR_FORMAT_LIST {
+        //     connID: conn_id as UINT32,
+        //     msgType: 0 as UINT16,
+        //     msgFlags: 0 as UINT16,
+        //     dataLen: 0 as UINT32,
+        //     numFormats: num_formats,
+        //     formats: formats.as_mut_ptr(),
+        // };
 
         let ret = if let Some(f) = (**context).ServerFormatList {
             f(&mut (**context), &format_list)

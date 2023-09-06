@@ -19,5 +19,3 @@ fn flush(&mut self, valid: bool) -> Result<(Lsn, DiskPtr)> {
         }
     }
 }
-
-// https://github.com/Artisan-Lab/SafeNet/blob/main/knowledgebase/ptr%3A%3Awrite_bytes/1-rawptr-unsafe.rs

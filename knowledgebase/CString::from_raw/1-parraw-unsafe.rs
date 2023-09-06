@@ -1,6 +1,6 @@
-#![allow(unused)]
-use std::ffi::CString;
-use std::os::raw::c_char;
+// #![allow(unused)]
+// use std::ffi::CString;
+// use std::os::raw::c_char;
 
 fn free(raw: *mut c_char) {
     unsafe { CString::from_raw(raw); }

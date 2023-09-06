@@ -1,4 +1,4 @@
-use std::ffi::CString;
+// use std::ffi::CString;
 
 fn main() {
     let cstring = CString::new("hello").expect("Failed to create CString");

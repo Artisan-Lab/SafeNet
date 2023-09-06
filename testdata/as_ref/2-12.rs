@@ -1,5 +1,5 @@
-impl Iterator for LookupHost {
-    type Item = SocketAddr;
+// impl Iterator for LookupHost {
+//     type Item = SocketAddr;
     fn next(&mut self) -> Option<SocketAddr> {
         loop {
             unsafe {
@@ -12,5 +12,5 @@ impl Iterator for LookupHost {
             }
         }
     }
-}
+// }
 //https://github.com/Milo123459/rust/blob/0928a1f7574f5ca019b5443b3a90008588d18c8c/library/std/src/sys_common/net.rs#L155

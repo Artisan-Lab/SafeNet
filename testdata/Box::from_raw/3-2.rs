@@ -1,4 +1,4 @@
- pub fn enable(enabled: bool) {
+fn enable(enabled: bool) {
         let mut lock = CONTEXT_SEND.addr.lock().unwrap();
         if enabled {
             if *lock == 0 {

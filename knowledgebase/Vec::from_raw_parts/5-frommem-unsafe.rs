@@ -5,7 +5,7 @@
     Replaceable? Yes
 */
 
-#![feature(vec_into_raw_parts)]
+// #![feature(vec_into_raw_parts)]
 fn convert_to_i8(input: Vec<u8>) -> Vec<i8> {
     let (p, l, c) = input.into_raw_parts();
     unsafe { Vec::from_raw_parts(p as *mut i8, l, c) }

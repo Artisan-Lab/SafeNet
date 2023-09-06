@@ -1,5 +1,5 @@
-use std::ptr::NonNull;
 fn inc_ref<T: IsObject>(ptr: NonNull<T>) {
+    use std::ptr::NonNull;
     unsafe { ptr.as_ref().as_object().inc_ref() }
 }
 /*

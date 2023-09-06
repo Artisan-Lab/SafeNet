@@ -1,4 +1,3 @@
-use std::ffi::CStr;
 
 // struct MyStruct {
 //     c_string: *const i8,

@@ -1,4 +1,4 @@
-pub(crate) fn from_jsvalue(ctx: &JSContext, val: JSValue) -> Self {
+fn from_jsvalue(ctx: &JSContext, val: JSValue) -> Self {
     let obj_val = val.to_object(ctx).unwrap();
     let wasmer_error_ptr = obj_val.get_property(&ctx, "wasmer_error_ptr".to_string());
     if wasmer_error_ptr.is_number(ctx) {

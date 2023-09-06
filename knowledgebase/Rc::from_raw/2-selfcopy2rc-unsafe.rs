@@ -3,12 +3,12 @@
 //struct MyStruct {v: i32}
 
 
-impl MyStruct {
+// impl MyStruct {
     fn to_rc(&mut self) -> Rc<i32>{
         let p = &mut self.v as *mut i32;
         unsafe{ Rc::from_raw(p) }
     }
-}
+// }
 
 /*
 fn main() {

@@ -1,5 +1,5 @@
-pub fn to_maybe_jsx_import_source_module(&self) -> Option<String> {
-    let compiler_options_value = self.json.compiler_options.as_ref()?;
+fn to_maybe_jsx_import_source_module(&self) -> Option<String> {
+  let compiler_options_value = self.json.compiler_options.as_ref()?;
     let compiler_options: CompilerOptions =
       serde_json::from_value(compiler_options_value.clone()).ok()?;
     match compiler_options.jsx.as_deref() {

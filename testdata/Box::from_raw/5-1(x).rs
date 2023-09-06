@@ -1,4 +1,4 @@
-pub unsafe fn from_boxed_utf8_unchecked(v: Box<[u8]>) -> Box<str> {
+unsafe fn from_boxed_utf8_unchecked(v: Box<[u8]>) -> Box<str> {
     unsafe { Box::from_raw(Box::into_raw(v) as *mut str) }
 }
 

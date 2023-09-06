@@ -5,8 +5,8 @@
     Replaceable? No; The original code is nonsense. We don't know the purpose of the code. We mark it as irreplaceable because converting any raw pointer to an owned object is unsafe.
 */
 
-#![allow(unused)]
-use std::mem;
+// #![allow(unused)]
+// use std::mem;
 
 fn foo(p:*mut u8, len:usize, cap:usize) {
     let s = unsafe { Vec::from_raw_parts(p, len, cap) }; 
