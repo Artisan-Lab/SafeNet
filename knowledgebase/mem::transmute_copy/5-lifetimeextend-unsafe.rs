@@ -1,4 +1,4 @@
-#![allow(unused)]
+// #![allow(unused)]
 
 struct R<'a>(&'a i32);
 

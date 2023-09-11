@@ -1,5 +1,3 @@
-use std::mem::{self, MaybeUninit};
-const SIZE: usize = 10;
 fn main(){
     let x = {
         let mut x: [MaybeUninit<Box<u32>>; SIZE] = unsafe {

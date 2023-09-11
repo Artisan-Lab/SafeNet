@@ -2,7 +2,7 @@
 From: https://doc.rust-lang.org/std/mem/fn.transmute.html
 */
 
-#![allow(unused)]
+// #![allow(unused)]
 
 struct R<'a>(&'a i32);
 

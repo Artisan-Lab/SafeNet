@@ -1,5 +1,5 @@
 fn find_naive_4(&self, mut pos: usize, hay: &Mmap) -> Option<usize> {
-        use std::mem::transmute;
+        // use std::mem::transmute;
         let max_pos = hay.len() - 4;
         unsafe {
             let needle: u32 = transmute::<[u8; 4], u32>((&*self.bytes).try_into().unwrap());

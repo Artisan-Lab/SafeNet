@@ -1,8 +1,8 @@
 /*
 From: https://doc.rust-lang.org/std/mem/union.MaybeUninit.html
 */
-#![allow(unused)]
-use std::mem::{self, MaybeUninit};
+// #![allow(unused)]
+// use std::mem::{self, MaybeUninit};
 
 fn main() {
     let mut data: [MaybeUninit<Vec<u32>>; 1000] = unsafe {

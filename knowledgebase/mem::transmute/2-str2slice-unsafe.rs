@@ -1,4 +1,4 @@
-#![allow(unused)]
+// #![allow(unused)]
 
 fn main() {
     let s: &str = "hello, world!";

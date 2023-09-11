@@ -1,5 +1,5 @@
-use std::mem;
-use std::mem::MaybeUninit;
+// use std::mem;
+// use std::mem::MaybeUninit;
 
 fn main() {
     let mut array: [MaybeUninit<i32>; 1000] = unsafe { MaybeUninit::uninit().assume_init() };

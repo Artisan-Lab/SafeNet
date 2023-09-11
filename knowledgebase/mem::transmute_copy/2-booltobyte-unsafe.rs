@@ -1,4 +1,4 @@
-use std::mem;
+// use std::mem;
 
 fn bool_to_byte(value: bool) -> u8 {
     unsafe {

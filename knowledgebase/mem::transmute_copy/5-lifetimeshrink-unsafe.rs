@@ -1,6 +1,6 @@
-#![allow(unused)]
+// #![allow(unused)]
 
-use std::mem;
+// use std::mem;
 
 struct R<'a>(&'a i32);
 static G: i32 = 1;

@@ -1,4 +1,4 @@
-impl Traveler<U4> for U4 {
+// impl Traveler<U4> for U4 {
     fn read<I>(seq: &mut I, _constants: Option<&ConstantPool>) -> U4
     where
         I: Iterator<Item = u8>,
@@ -10,5 +10,5 @@ impl Traveler<U4> for U4 {
         let u = [u3, u2, u1, u0];
         unsafe { transmute::<[u8; 4], u32>(u) }
     }
-}
+// }
                

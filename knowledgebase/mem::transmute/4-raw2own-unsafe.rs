@@ -1,4 +1,4 @@
-#![allow(unused)]
+// #![allow(unused)]
 fn main() {
     let ptr: *mut i32 = &mut 0;
     let ref_transmuted = unsafe {
