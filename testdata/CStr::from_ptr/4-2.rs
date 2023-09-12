@@ -3,7 +3,7 @@ pub extern "C" fn metrics_run(
     allow_ips: *const *const c_char,
     allow_ips_len: usize,
     prometheus_port: u16,
-    debug_metrics: bool,
+    // debug_metrics: bool,
 ) -> bool {
     // Convert the C string IPs to Rust strings.
     let allow_ips = unsafe { slice::from_raw_parts(allow_ips, allow_ips_len) };
@@ -46,11 +46,11 @@ pub extern "C" fn metrics_run(
     );
 
     // Metrics matching any of these filters will be discarded.
-    let filters = if debug_metrics {
-        &[][..]
-    } else {
-        &["zcashd.debug."]
-    };
+    // let filters = if debug_metrics {
+    //     &[][..]
+    // } else {
+    //     &["zcashd.debug."]
+    // };
 
     allow_ips
         .into_iter()

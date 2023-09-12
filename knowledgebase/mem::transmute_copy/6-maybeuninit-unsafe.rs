@@ -1,5 +1,5 @@
-#![allow(unused)]
-use std::mem::{self, MaybeUninit};
+// #![allow(unused)]
+// use std::mem::{self, MaybeUninit};
 
 fn main() {
     let mut data: [MaybeUninit<Vec<u32>>; 1000] = unsafe {
@@ -20,5 +20,5 @@ fn main() {
         mem::transmute_copy(&vec_data)
     };
 
-    assert_eq!(&vec_data[0], &[42]);
+    // assert_eq!(&vec_data[0], &[42]);
 }

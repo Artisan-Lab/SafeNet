@@ -1,6 +1,13 @@
+use std::ptr;
+
 fn main() {
-    let mut x = 42;
+    let mut x: i32 = 42;
     let raw_ptr: *mut i32 = &mut x;
-    let reference: &i32 = unsafe { &*raw_ptr }; 
-    println!("Value: {}", reference);
+    let read_value: i32;
+
+    unsafe {
+        read_value = ptr::read(raw_ptr); 
+    }
+
+    println!("Read value: {}", read_value);
 }

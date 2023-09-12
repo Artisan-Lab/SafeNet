@@ -1,5 +1,5 @@
-use std::rc::Rc;
-use std::ptr;
+// use std::rc::Rc;
+// use std::ptr;
 
 fn main() {
     let mut data = vec![1, 2, 3, 4, 5];

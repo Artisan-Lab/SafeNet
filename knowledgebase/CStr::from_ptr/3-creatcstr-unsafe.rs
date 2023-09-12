@@ -1,8 +1,8 @@
-#![allow(unused)]
-#![feature(const_cstr_methods)]
-#![feature(const_cstr_from_ptr)]
+// #![allow(unused)]
+// #![feature(const_cstr_methods)]
+// #![feature(const_cstr_from_ptr)]
 
-use std::ffi::{c_char, CStr};
+// use std::ffi::{c_char, CStr};
 
 fn main() {
     const raw: *const c_char = {

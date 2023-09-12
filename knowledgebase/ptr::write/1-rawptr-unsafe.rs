@@ -7,5 +7,3 @@ fn main() {
         std::ptr::write(y as *mut i32,1);
     }
 }
-
-// 
