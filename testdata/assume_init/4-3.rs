@@ -12,4 +12,4 @@ fn get_process_time(vm: &VirtualMachine) -> PyResult<Duration> {
     Ok(Duration::from_nanos(
         time_muldiv(t.tms_utime, SEC_TO_NS, freq) + time_muldiv(t.tms_stime, SEC_TO_NS, freq),
     ))
-}
+}                                                                                                                                                   

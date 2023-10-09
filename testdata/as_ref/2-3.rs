@@ -1,13 +1,7 @@
-fn to_maybe_jsx_import_source_module(&self) -> Option<String> {
-  let compiler_options_value = self.json.compiler_options.as_ref()?;
-    let compiler_options: CompilerOptions =
-      serde_json::from_value(compiler_options_value.clone()).ok()?;
-    match compiler_options.jsx.as_deref() {
-      Some("react-jsx") => Some("jsx-runtime".to_string()),
-      Some("react-jsxdev") => Some("jsx-dev-runtime".to_string()),
-      _ => None,
+// impl SlabEntry {
+    fn self_ref(&self) -> &HttpSlabRecord {
+        // SAFETY: We have the lock and we're borrowing lifetime from self
+        unsafe { self.0.as_ref() }
     }
-  }
-/*
-https://github.com/ISMAILBOUADDI/deno/blob/17d81ad2ef0001f862ba0a324e2f4d28f1cfdc78/cli/config_file.rs#L563
- */
+// }
+// https://github.com/denoland/deno/blob/cd2525d4cff4e18b1e3e7d29458079942ba2b6c5/ext/http/slab.rs#L143

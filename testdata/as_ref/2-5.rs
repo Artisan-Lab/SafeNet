@@ -1,7 +1,9 @@
-pub fn header(&self) -> &Header {
-    use std::ptr::NonNull;
-    unsafe { self.ptr.as_ref() }
-}
-/*
-https://github.com/passcod/tokio/blob/f2a06bff1be147a72d40cb01d8bb621fbdc242fc/tokio/src/runtime/task/raw.rs#L4
-*/
+// impl<T: AlwaysRefCounted> Deref for ARef<T> {
+//     type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        // SAFETY: The type invariants guarantee that the object is valid.
+        unsafe { self.ptr.as_ref() }
+    }
+// }
+//https://github.com/beagleboard/linux/blob/98be618ad03010b1173fc3c35f6cbb4447ee2b07/rust/kernel/types.rs#L370
