@@ -1,16 +1,15 @@
-fn compact(&mut self) {
-    if self.read_pos == 0 {
-        return;
+pub fn shift(&mut self) {
+    if self.position > 0 {
+        unsafe {
+            let length = self.end - self.position;
+            ptr::copy(
+                self.memory[self.position..self.end].as_ptr(),
+                self.memory[..length].as_mut_ptr(),
+                length,
+            );
+            self.position = 0;
+            self.end = length;
+        }
     }
-    let buffer = self.buffer.as_mut().unwrap();
-    let ptr = buffer.as_mut_ptr();
-    let readable_len = buffer.len() - self.read_pos;
-    unsafe {
-        std::ptr::copy(ptr.add(self.read_pos), ptr, readable_len);
-        buffer.set_init(readable_len);
-    }
-    self.read_pos = 0;
 }
-
-
-// https://github.com/ihciah/shadow-tls/blob/3f4d3124b665b62d5bac44025a2781c729612a2a/src/util.rs#L582
+// https://github.com/sozu-proxy/sozu/blob/fc293549814a450e5d20bf682cb8002ce55ee5e7/command/src/buffer/growable.rs#L101

@@ -1,17 +1,16 @@
-fn drop(&mut self) {
-    if self.deleted_cnt > 0 {
-        // SAFETY: Trailing unchecked items must be valid since we never touch them.
-        unsafe {
-            ptr::copy(
-                self.v.as_ptr().add(self.processed_len),
-                self.v.as_mut_ptr().add(self.processed_len - self.deleted_cnt),
-                self.original_len - self.processed_len,
-            );
-        }
+fn compact(&mut self) {
+    if self.read_pos == 0 {
+        return;
     }
-    // SAFETY: After filling holes, all items are in contiguous memory.
+    let buffer = self.buffer.as_mut().unwrap();
+    let ptr = buffer.as_mut_ptr();
+    let readable_len = buffer.len() - self.read_pos;
     unsafe {
-        self.v.set_len(self.original_len - self.deleted_cnt);
+        std::ptr::copy(ptr.add(self.read_pos), ptr, readable_len);
+        buffer.set_init(readable_len);
     }
+    self.read_pos = 0;
 }
-// https://github.com/rust-lang/rust/blob/dfe0683138de0959b6ab6a039b54d9347f6a6355/library/alloc/src/vec/mod.rs#L1610
+
+
+// https://github.com/ihciah/shadow-tls/blob/3f4d3124b665b62d5bac44025a2781c729612a2a/src/util.rs#L582
