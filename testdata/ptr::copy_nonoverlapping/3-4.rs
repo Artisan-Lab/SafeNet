@@ -1,14 +1,27 @@
-let num_rets = rets_list.len();
-                if !using_rets_array && num_rets > 0 {
-                    let src_pointer = params_list.as_ptr();
-                    let rets_list = &mut rets_list_array.as_mut()[0] as *mut RawValue;
-                    unsafe {
-                        // TODO: we can probably remove this copy by doing some clever `transmute`s.
-                        // we know it's not overlapping because `using_rets_array` is false
-                        std::ptr::copy_nonoverlapping(src_pointer,
-                                                        rets_list,
-                                                        num_rets);
-                    }
-                }
-
-// https://github.com/wasmerio/wasmer/blob/fca2b07eed002e3cdb0b201016ca2400ac84d279/lib/api/src/sys/typed_function.rs#L85
+pub fn pop_vertex<T: Copy>(&mut self) -> Result<T, ValidationError> {
+    if std::mem::size_of::<T>() == self.vertex_buffer.vertex_size as usize
+        && self.vertex_buffer.data.len() >= self.vertex_buffer.vertex_size as usize
+    {
+        unsafe {
+            let mut v = MaybeUninit::<T>::uninit();
+            std::ptr::copy_nonoverlapping(
+                self.vertex_buffer.data.as_ptr().add(
+                    self.vertex_buffer.data.len() - self.vertex_buffer.vertex_size as usize,
+                ),
+                v.as_mut_ptr() as *mut u8,
+                self.vertex_buffer.vertex_size as usize,
+            );
+            self.vertex_buffer.data.drain(
+                (self.vertex_buffer.data.len() - self.vertex_buffer.vertex_size as usize)..,
+            );
+            self.vertex_buffer.vertex_count -= 1;
+            Ok(v.assume_init())
+        }
+    } else {
+        Err(ValidationError::InvalidVertexSize {
+            expected: self.vertex_buffer.vertex_size,
+            actual: std::mem::size_of::<T>() as u8,
+        })
+    }
+}
+// https://github.com/FyroxEngine/Fyrox/blob/cb4868bc332309e36b23e11f679698f076c16583/src/scene/mesh/buffer.rs#L238

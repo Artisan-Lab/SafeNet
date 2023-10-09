@@ -1,15 +1,25 @@
-impl CopyOrErr for [u8] {
-    fn copy_from_slice_or_err(&mut self, src: &Self) -> Result<(), ErrorCode> {
-        if self.len() == src.len() {
-            // SAFETY: `self` is valid for `self.len()` elements by definition, and `src` was
-            // checked to have the same length. The slices cannot overlap because
-            // mutable references are exclusive.
-            unsafe {
-                ptr::copy_nonoverlapping(src.as_ptr(), self.as_mut_ptr(), self.len());
-            }
-            Ok(())
-        } else {
-            Err(ErrorCode::SIZE)
-        }
+extern "C" fn initialize_decoder(buffer_ptr: *const u8, len: i32, codec: i32) {
+    let codec = if codec == 0 {
+        CodecType::H264
+    } else {
+        CodecType::Hevc
+    };
+
+    let mut config_buffer = vec![0; len as usize];
+
+    unsafe { ptr::copy_nonoverlapping(buffer_ptr, config_buffer.as_mut_ptr(), len as usize) };
+
+    if let Some(sender) = &*VIDEO_MIRROR_SENDER.lock() {
+        sender.send(config_buffer.clone()).ok();
     }
+
+    if let Some(file) = &mut *VIDEO_RECORDING_FILE.lock() {
+        file.write_all(&config_buffer).ok();
+    }
+
+    *DECODER_CONFIG.lock() = Some(DecoderInitializationConfig {
+        codec,
+        config_buffer,
+    });
 }
+// https://github.com/alvr-org/ALVR/blob/00a19bf54f283fc8aaf816b7cb4b09c3a99369d2/alvr/server/src/lib.rs#L328

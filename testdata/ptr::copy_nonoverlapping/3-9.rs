@@ -1,27 +1,34 @@
-pub fn pop_vertex<T: Copy>(&mut self) -> Result<T, ValidationError> {
-    if std::mem::size_of::<T>() == self.vertex_buffer.vertex_size as usize
-        && self.vertex_buffer.data.len() >= self.vertex_buffer.vertex_size as usize
-    {
-        unsafe {
-            let mut v = MaybeUninit::<T>::uninit();
-            std::ptr::copy_nonoverlapping(
-                self.vertex_buffer.data.as_ptr().add(
-                    self.vertex_buffer.data.len() - self.vertex_buffer.vertex_size as usize,
-                ),
-                v.as_mut_ptr() as *mut u8,
-                self.vertex_buffer.vertex_size as usize,
-            );
-            self.vertex_buffer.data.drain(
-                (self.vertex_buffer.data.len() - self.vertex_buffer.vertex_size as usize)..,
-            );
-            self.vertex_buffer.vertex_count -= 1;
-            Ok(v.assume_init())
-        }
-    } else {
-        Err(ValidationError::InvalidVertexSize {
-            expected: self.vertex_buffer.vertex_size,
-            actual: std::mem::size_of::<T>() as u8,
-        })
+fn chunk(&self, mut file: OpenFile) -> SuccessfulRead {
+    // Read a chunk that's large enough to minimize thread handoffs but
+    // short enough to keep memory usage under control. It's hopefully
+    // unnecessary to worry about disk seeks; the madvise call should cause
+    // the kernel to read ahead.
+    let end = std::cmp::min(file.map_len, file.map_pos.saturating_add(1 << 16));
+    let mut chunk = Vec::new();
+    let len = end.checked_sub(file.map_pos).unwrap();
+    chunk.reserve_exact(len);
+
+    // SAFETY: [map_pos, map_pos + len) is verified to be within map_ptr.
+    //
+    // If the read is out of bounds of the file, we'll get a SIGBUS.
+    // That's not a safety violation. It also shouldn't happen because the
+    // length was set properly at open time, Moonfire NVR is a closed
+    // system (nothing else ever touches its files), and sample files are
+    // never truncated (only appended to or unlinked).
+    unsafe {
+        std::ptr::copy_nonoverlapping(
+            file.map_ptr.add(file.map_pos) as *const u8,
+            chunk.as_mut_ptr(),
+            len,
+        );
+        chunk.set_len(len);
     }
+    let file = if end == file.map_len {
+        None
+    } else {
+        file.map_pos = end;
+        Some(file)
+    };
+    SuccessfulRead { chunk, file }
 }
-// https://github.com/FyroxEngine/Fyrox/blob/cb4868bc332309e36b23e11f679698f076c16583/src/scene/mesh/buffer.rs#L238
+// https://github.com/scottlamb/moonfire-nvr/blob/aa60bc991c94a1e6eb5a9d7b8f670e92207d3a0f/server/db/dir/reader.rs#L413
