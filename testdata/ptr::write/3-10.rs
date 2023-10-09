@@ -1,30 +1,43 @@
-fn alloc_slice_within_chunk(&mut self, l: Layout) -> Option<NonNull<[u8]>> {
-    let size = l.size();
-    let header = AllocHeader::new(size);
-    let header_align = std::mem::align_of::<AllocHeader>();
-    let header_size = std::mem::size_of::<AllocHeader>();
+fn new<T>(header: H, value: T) -> WithHeader<H> {
+    let value_layout = Layout::new::<T>();
+    let Ok((layout, value_offset)) = Self::alloc_layout(value_layout) else {
+        // We pass an empty layout here because we do not know which layout caused the
+        // arithmetic overflow in `Layout::extend` and `handle_alloc_error` takes `Layout` as
+        // its argument rather than `Result<Layout, LayoutError>`, also this function has been
+        // stable since 1.28 ._.
+        //
+        // On the other hand, look at this gorgeous turbofish!
+        alloc::handle_alloc_error(Layout::new::<()>());
+    };
 
-    // We must align to both the AllocHeader and provided layout, so that we can
-    // safely `ptr::write` the header at the address of `pointer` below.
-    let align_offset = self
-        .current_next
-        .align_offset(std::cmp::max(l.align(), header_align));
-    let mut pointer = unsafe { self.current_next.add(align_offset) };
-    let new_current = unsafe { pointer.add(header_size).add(size) };
+    unsafe {
+        // Note: It's UB to pass a layout with a zero size to `alloc::alloc`, so
+        // we use `layout.dangling()` for this case, which should have a valid
+        // alignment for both `T` and `H`.
+        let ptr = if layout.size() == 0 {
+            // Some paranoia checking, mostly so that the ThinBox tests are
+            // more able to catch issues.
+            debug_assert!(
+                value_offset == 0 && mem::size_of::<T>() == 0 && mem::size_of::<H>() == 0
+            );
+            layout.dangling()
+        } else {
+            let ptr = alloc::alloc(layout);
+            if ptr.is_null() {
+                alloc::handle_alloc_error(layout);
+            }
+            // Safety:
+            // - The size is at least `aligned_header_size`.
+            let ptr = ptr.add(value_offset) as *mut _;
 
-    if new_current > self.current_end {
-        return None;
+            NonNull::new_unchecked(ptr)
+        };
+
+        let result = WithHeader(ptr, PhantomData);
+        ptr::write(result.header(), header);
+        ptr::write(result.value().cast(), value);
+
+        result
     }
-
-    debug_assert!(!new_current.is_null());
-    debug_assert_eq!(pointer.align_offset(std::mem::align_of::<AllocHeader>()), 0);
-    self.current_next = new_current;
-    // Write header into memory
-    unsafe { std::ptr::write(pointer as *mut AllocHeader, header) };
-    // Move pointer by header_size
-    pointer = unsafe { pointer.add(header_size) };
-
-    let slice = unsafe { std::slice::from_raw_parts(pointer, size) };
-    Some(NonNull::from(slice))
-}
-// https://github.com/facebook/hhvm/blob/eb80592a45e22de5590ccb534065984041e1da70/hphp/hack/src/shmrs/shardalloc.rs#L234
+}   
+// https://github.com/Rust-for-Linux/linux/blob/c8d1ae2cbe240789ad402c71fce78a7ea1ebdea5/rust/alloc/boxed/thin.rs#L224
