@@ -7,6 +7,12 @@ pub(crate) fn append_line_offsets(source: &str, out: &mut Vec<raw::LineOffset>) 
 
     let buf_ptr = source.as_ptr();
     out.extend(source.lines().map(move |line| {
+        // let line = token.get_src_line();
+        // let tokens = match &sm {
+        //     DecodedMap::Regular(sm) => sm.tokens(),
+        //     DecodedMap::Hermes(smh) => smh.tokens(),
+        //     DecodedMap::Index(_smi) => unreachable!(),
+        // };
         raw::LineOffset(unsafe { line.as_ptr().offset_from(buf_ptr) as usize } as u32)
     }));
 

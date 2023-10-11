@@ -1,47 +1,26 @@
-fn parse_entry_at_offset(data: &[u8], offset: u32) -> Result<Entry<'_>> {
-    fn entry_impl(data: &[u8], offset: u32) -> Option<Result<Entry<'_>>> {
-        let mut data = data.get(offset as usize..)?;
-        let start = data.as_ptr();
+fn conflicts(&self, other: &Self) -> bool {
+    debug_assert!(self.range.0 <= self.range.1);
+    debug_assert!(other.range.0 <= other.range.1);
 
-        let lfh = data.read_pod::<LocalFileHeader>()?;
-        if lfh.magic != LOCAL_FILE_HEADER_MAGIC {
-            return Some(Err(Error::new(
-                ErrorKind::InvalidData,
-                "local file header contains invalid magic number",
-            )))
-        }
-
-        if (lfh.flags & FLAG_ENCRYPTED) != 0 || (lfh.flags & FLAG_HAS_DATA_DESCRIPTOR) != 0 {
-            return Some(Err(Error::new(
-                ErrorKind::InvalidData,
-                "attempted lookup of unsupported entry",
-            )))
-        }
-
-        let path = data.read_slice(lfh.file_name_length.into())?;
-        let path = Path::new(OsStr::from_bytes(path));
-
-        let _extra = data.read_slice(lfh.extra_field_length.into())?;
-        // SAFETY: Both pointers point into the same underlying byte array.
-        let data_offset = offset as usize
-            + usize::try_from(unsafe { data.as_ptr().offset_from(start) }).unwrap();
-        let data = data.read_slice(lfh.compressed_size as usize)?;
-
-        let entry = Entry {
-            compression: lfh.compression,
-            path,
-            data_offset,
-            data,
-        };
-
-        Some(Ok(entry))
+    if other.range.0 >= self.range.1 || self.range.0 >= other.range.1 {
+        return false;
     }
 
-    entry_impl(data, offset).unwrap_or_else(|| {
-        Err(Error::new(
-            ErrorKind::InvalidData,
-            "failed to read archive entry",
-        ))
-    })
+    // The Diophantine equation which describes whether any integers can combine the data pointers and strides of the two arrays s.t.
+    // they yield the same element has a solution if and only if the GCD of all strides divides the difference of the data pointers.
+    //
+    // That solution could be out of bounds which mean that this is still an over-approximation.
+    // It appears sufficient to handle typical cases like the color channels of an image,
+    // but fails when slicing an array with a step size that does not divide the dimension along that axis.
+    //
+    // https://users.rust-lang.org/t/math-for-borrow-checking-numpy-arrays/73303
+    let ptr_diff = unsafe { self.data_ptr.offset_from(other.data_ptr).abs() };
+    let gcd_strides = gcd(self.gcd_strides, other.gcd_strides);
+
+    if ptr_diff % gcd_strides != 0 {
+        return false;
+    }
+
+    // By default, a conflict is assumed as it is the safe choice without actually solving the aliasing equation.
+    true
 }
-//https://github.com/libbpf/blazesym/blob/e07c5adc3af1724e3ed89760141003e702984c06/src/zip.rs#L188
