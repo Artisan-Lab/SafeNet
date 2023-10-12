@@ -31,4 +31,5 @@ fn new(slice: &[u8]) -> Self {
     }
     Self(data)
 }
-// https://github.com/spacejam/sled/blob/69294e59c718289ab3cb6bd03ac3b9e1e072a1e7/src/ivec.rs#L138
+
+// https://github.com/spacejam/sled/blob/005c023ca94d424d8e630125e4c21320ed160031/src/ivec.rs#L138
