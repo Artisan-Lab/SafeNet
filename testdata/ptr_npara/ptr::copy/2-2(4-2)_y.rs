@@ -42,5 +42,31 @@ pub fn reserve_edges_dense(&mut self, degree_to_add: &Vec<i64>) {
         }
         self.buffers.push((new_buf, new_buf_size));
     }
+    // if new_buf_size != 0 {
+    //     let mut new_data: Vec<Nbr<I>> = Vec::with_capacity(new_buf_size);
+    //     let mut p = <I as IndexType>::max();
+    //     for i in 0..vnum {
+    //         let mut cap = self.adj_lists[i].capacity();
+    //         if cap < 0 {
+    //             cap = -cap;
+    //             self.adj_lists[i].set_capacity(cap);
+    //             self.prev[i] = p;
+    //             if p != <I as IndexType>::max() {
+    //                 self.next[p.index()] = I::new(i);
+    //             }
+    //             p = I::new(i);
+    //             let old_degree = self.adj_lists[i].degree();
+    //             if old_degree > 0 {
+    //                 let slice = &self.adj_lists[i].data()[..old_degree as usize];
+    //                 new_data.extend_from_slice(slice);
+    //             }
+    //             self.adj_lists[i].set(begin, old_degree, cap);
+    //         }
+    //     }
+    //     if p != <I as IndexType>::max() {
+    //         self.next[p.index()] = <I as IndexType>::max();
+    //     }
+    //     self.buffers.push((new_data.into_boxed_slice(), new_buf_size));
+    // }
 }
 // https://github.com/alldatacenter/alldata/blob/2fc8f53f7f49f27354d65b02635af014f1b0aea1/kg/GraphScope/interactive_engine/executor/store/mcsr/src/mcsr.rs#L190

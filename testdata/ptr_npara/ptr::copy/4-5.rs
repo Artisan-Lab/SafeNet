@@ -48,6 +48,7 @@ fn raw_encode<'a>(
                     buf.as_mut_ptr(),
                     bytes,
                 );
+                // safety：buf[0..bytes].copy_from_slice(&sign);
             }
             &mut buf[bytes..]
         }

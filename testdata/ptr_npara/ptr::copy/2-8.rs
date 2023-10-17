@@ -26,6 +26,8 @@ pub fn read_to_buffer(&mut self, target: &mut [u8]) -> usize {
                 std::ptr::copy((&data[..remaining]).as_ptr(), ptr.as_mut_ptr(), remaining);
                 remaining
             };
+            // safety: target[read_len..(read_len + n)].copy_from_slice(&data[..n]);
+
 
             remaining -= n;
             read_len += n;
@@ -39,6 +41,7 @@ pub fn read_to_buffer(&mut self, target: &mut [u8]) -> usize {
                 std::ptr::copy(data.as_ptr(), ptr.as_mut_ptr(), data.len());
                 data.len()
             };
+            // safety: target[read_len..(read_len + data.len())].copy_from_slice(&data);
 
             read_len += n;
             remaining -= n;
