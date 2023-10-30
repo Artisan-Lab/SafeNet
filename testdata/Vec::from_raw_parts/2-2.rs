@@ -1,27 +1,15 @@
-pub unsafe fn resize(mut self, sz: usize) -> Vec<MaybeUninit<T>> {
-    let len = self.len();
-
-    let new_data = if sz < len {
-        self.data.set_len(sz);
-        self.data.shrink_to_fit();
-        Vec::from_raw_parts(
-            self.data.as_mut_ptr() as *mut MaybeUninit<T>,
-            self.data.len(),
-            self.data.capacity(),
-        )
-    } else {
-        self.data.reserve_exact(sz - len);
-        let mut new_data = Vec::from_raw_parts(
-            self.data.as_mut_ptr() as *mut MaybeUninit<T>,
-            self.data.len(),
-            self.data.capacity(),
-        );
-        new_data.set_len(sz);
-        new_data
-    };
-
-    std::mem::forget(self);
-    new_data
+fn drop(&mut self) {
+    unsafe {
+        if self.went_off_stack() {
+            // free the heap
+            let (ptr, len) = self.store.heap();
+            // let vec's destructor do the work
+            mem::drop(Vec::from_raw_parts(ptr, len, self.cap));
+        } else {
+            // on stack? get self as a slice and destruct it
+            ptr::drop_in_place(&mut self[..]);
+        }
+    }
 }
 
-// https://github.com/dimforge/nalgebra/blob/5baf86b3111858cdecb6518f21ed3b2c579d04f5/src/base/vec_storage.rs#L127
+// https://github.com/skytable/skytable/blob/6736285df5f94ae6e2144ee84cbfd128e1a63d8b/server/src/corestore/iarray.rs#L543
