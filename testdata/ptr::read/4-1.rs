@@ -1,47 +1,13 @@
-fn next(&mut self) -> Option<T> {
-    unsafe {
-        while self.idx < self.old_len {
-            let i = self.idx;
-            let v = slice::from_raw_parts_mut(self.vec.as_mut_ptr(), self.old_len);
-            let drained = (self.pred)(&mut v[i]);
-            // Update the index *after* the predicate is called. If the index
-            // is updated prior and the predicate panics, the element at this
-            // index would be leaked.
-            self.idx += 1;
-            if drained {
-                self.del += 1;
-                return Some(ptr::read(&v[i]));
-            } else if self.del > 0 {
-                let del = self.del;
-                let src: *const T = &v[i];
-                let dst: *mut T = &mut v[i - del];
-                ptr::copy_nonoverlapping(src, dst, 1);
-            }
-        }
-        None
-    }
+pub unsafe fn take_userdata<T>(state: *mut ffi::lua_State) -> T {
+    // We set the metatable of userdata on __gc to a special table with no __gc method and with
+    // metamethods that trigger an error on access.  We do this so that it will not be double
+    // dropped, and also so that it cannot be used or identified as any particular userdata type
+    // after the first call to __gc.
+    get_destructed_userdata_metatable(state);
+    ffi::lua_setmetatable(state, -2);
+    let ud = align_userdata_ptr::<T>(ffi::lua_touserdata(state, -1) as *mut u8);
+    rlua_debug_assert!(!ud.is_null(), "userdata pointer is null");
+    ffi::lua_pop(state, 1);
+    ptr::read(ud)
 }
-
-// https://github.com/rust-lang/rust/blob/b7bc6f88ac771e1197ac9e06bf20586eeb5d0bdf/library/alloc/src/vec/extract_if.rs#L73
-
-
-// fn next(&mut self) -> Option<T> {
-//     while self.idx < self.old_len {
-//         let i = self.idx;
-//         let v = slice::from_raw_parts_mut(self.vec.as_mut_ptr(), self.old_len);
-//         let drained = (self.pred)(&mut v[i]);
-//         self.idx += 1;
-//         if drained {
-//             self.del += 1;
-//             return Some(unsafe { ptr::read(&v[i]) });
-//         } else if self.del > 0 {
-//             let del = self.del;
-//             let src: *const T = &v[i];
-//             let dst: *mut T = &mut v[i - del];
-//             unsafe {
-//                 ptr::copy_nonoverlapping(src, dst, 1);
-//             }
-//         }
-//     }
-//     None
-// }
+// https://github.com/amethyst/rlua/blob/6152008989fb43a63c0632dc39dea25f40390ac9/src/util.rs#L341

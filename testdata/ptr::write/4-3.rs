@@ -1,18 +1,38 @@
-pub fn new(cache: Box<dyn ObjectCache>) -> Box<Self> {
-    let this = Box::new(Self {
-        wrapper: Default::default(),
-        cache,
-    });
-    let context = Box::into_raw(this);
-    let wrapper = unsafe {
-        LLVMObjectCacheWrapperCreate(
-            context as *mut c_void,
-            object_cache_getter,
-            object_cache_notifier,
-        )
-    };
-    let mut this = unsafe { Box::from_raw(context) };
-    unsafe { ptr::write(&mut this.wrapper, wrapper) };
-    this
+impl<T: PyClass> PyObjectInit<T> for PyClassInitializer<T> {
+    unsafe fn into_new_object(
+        self,
+        py: Python<'_>,
+        subtype: *mut PyTypeObject,
+    ) -> PyResult<*mut ffi::PyObject> {
+        /// Layout of a PyCell after base new has been called, but the contents have not yet been
+        /// written.
+        #[repr(C)]
+        struct PartiallyInitializedPyCell<T: PyClass> {
+            _ob_base: <T::BaseType as PyClassBaseType>::LayoutAsBase,
+            contents: MaybeUninit<PyCellContents<T>>,
+        }
+
+        let (init, super_init) = match self.0 {
+            PyClassInitializerImpl::Existing(value) => return Ok(value.into_ptr()),
+            PyClassInitializerImpl::New { init, super_init } => (init, super_init),
+        };
+
+        let obj = super_init.into_new_object(py, subtype)?;
+
+        let cell: *mut PartiallyInitializedPyCell<T> = obj as _;
+        std::ptr::write(
+            (*cell).contents.as_mut_ptr(),
+            PyCellContents {
+                value: ManuallyDrop::new(UnsafeCell::new(init)),
+                borrow_checker: <T::PyClassMutability as PyClassMutability>::Storage::new(),
+                thread_checker: T::ThreadChecker::new(),
+                dict: T::Dict::INIT,
+                weakref: T::WeakRef::INIT,
+            },
+        );
+        Ok(obj)
+    }
+
+    private_impl! {}
 }
-// https://github.com/GetFirefly/firefly/blob/8e89bc7ec33cb8ffa9a60283c8dcb7ff62ead5fa/compiler/llvm/src/jit.rs#L91
+// https://github.com/PyO3/pyo3/blob/54ab9090be944d72acbb78445c043b0c0e12a2ae/src/pyclass_init.rs#L258

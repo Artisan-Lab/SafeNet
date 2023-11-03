@@ -1,23 +1,27 @@
-fn validate_guard_region(region: &GuestMmapRegion) {
-    let page_size = get_page_size().unwrap();
+fn swap<T>(a: &mut T, b: &mut T) {
+     unsafe {
+         // Create a bitwise copy of the value at `a` in `tmp`.
+         let tmp = ptr::read(a);
 
-    // Check that the created range allows us to write inside it
-    let addr = region.as_ptr();
+         // Exiting at this point (either by explicitly returning or by
+         // calling a function which panics) would cause the value in `tmp` to
+         // be dropped while the same value is still referenced by `a`. This
+         // could trigger undefined behavior if `T` is not `Copy`.
 
-    unsafe {
-        std::ptr::write(addr, 0xFF);
-        assert_eq!(std::ptr::read(addr), 0xFF);
+         // Create a bitwise copy of the value at `b` in `a`.
+         // This is safe because mutable references cannot alias.
+         ptr::copy_nonoverlapping(b, a, 1);
+
+         // As above, exiting here could trigger undefined behavior because
+         // the same value is referenced by `a` and `b`.
+
+         // Move `tmp` into `b`.
+         ptr::write(b, tmp);
+
+         // `tmp` has been moved (`write` takes ownership of its second argument),
+         // so nothing is dropped implicitly here.
     }
-
-    // Try a read/write operation against the left guard border of the range
-    let left_border = (addr as usize - page_size) as *mut u8;
-    fork_and_run(&|| AddrOp::Read.apply_on_addr(left_border), true);
-    fork_and_run(&|| AddrOp::Write.apply_on_addr(left_border), true);
-
-    // Try a read/write operation against the right guard border of the range
-    let right_border = (addr as usize + region.size()) as *mut u8;
-    fork_and_run(&|| AddrOp::Read.apply_on_addr(right_border), true);
-    fork_and_run(&|| AddrOp::Write.apply_on_addr(right_border), true);
 }
 
-// https://github.com/firecracker-microvm/firecracker/blob/5a6f28dea0fcb5c1cc61e1cb5a5cf4414eb08778/src/utils/src/vm_memory.rs#L472
+
+// https://github.com/rust-lang/rust/blob/84d44dd1d8ec1e98fff94272ba4f96b2a1f044ca/library/core/src/ptr/mod.rs#L1098

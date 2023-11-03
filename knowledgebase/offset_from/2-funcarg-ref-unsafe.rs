@@ -1,7 +1,13 @@
-fn process_raw(ref1:&mut i32, ref2: &mut i32) {
-    let raw1 = ref1 as *mut i32;
-    let raw2 = ref2 as *mut i32;
-    unsafe {
-        let distance = raw1.offset_from(raw2);
+#![allow(unused)]
+use std::ptr;
+
+fn main()
+{
+    unsafe{
+        let mut num =42;
+        let raw_ptr: *const i32 = &num;
+        let a = std::ptr::read(&num);
+        raw_ptr.offset_from(&num);
     }
+    
 }

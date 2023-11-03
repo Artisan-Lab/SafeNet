@@ -1,89 +1,25 @@
-pub fn disassemble(vm: &VM, fct_id: FunctionId, type_params: &BytecodeTypeArray, code: &Code) {
-    let instruction_length = code.instruction_end().offset_from(code.instruction_start());
-    let buf: &[u8] =
-        unsafe { slice::from_raw_parts(code.instruction_start().to_ptr(), instruction_length) };
-
-    let engine = get_engine().expect("cannot create capstone engine");
-
-    let mut w: Box<dyn Write> = if vm.args.flag_emit_asm_file {
-        let pid = unsafe { libc::getpid() };
-        let name = format!("code-{}.asm", pid);
-        let file = OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(&name)
-            .expect("couldn't append to asm file");
-
-        Box::new(BufWriter::new(file))
-    } else {
-        Box::new(io::stdout())
-    };
-
-    let start_addr = code.instruction_start().to_usize() as u64;
-    let end_addr = code.instruction_end().to_usize() as u64;
-
-    let instrs = engine
-        .disasm_all(buf, start_addr)
-        .expect("could not disassemble code");
-
-    let name = display_fct(vm, fct_id);
-
-    let type_params = if !type_params.is_empty() {
-        let mut ty_names = Vec::new();
-
-        for ty in type_params.iter() {
-            ty_names.push(display_ty(vm, &ty));
-        }
-
-        format!(" [{}]", ty_names.join(", "))
-    } else {
-        "".into()
-    };
-
-    writeln!(
-        &mut w,
-        "fn {}{} {:#x} {:#x}",
-        &name, type_params, start_addr, end_addr
-    )
-        .unwrap();
-
-    for instr in instrs.iter() {
-        let addr = (instr.address() - start_addr) as u32;
-
-        if let Some(gc_point) = code.gcpoint_for_offset(addr) {
-            write!(&mut w, "\t\t  ; gc point = (").unwrap();
-            let mut first = true;
-
-            for &offset in &gc_point.offsets {
-                if !first {
-                    write!(&mut w, ", ").unwrap();
-                }
-
-                if offset < 0 {
-                    write!(&mut w, "-").unwrap();
-                }
-
-                write!(&mut w, "0x{:x}", offset.abs()).unwrap();
-                first = false;
-            }
-
-            writeln!(&mut w, ")").unwrap();
-        }
-
-        for comment in code.comments_for_offset(addr as u32) {
-            writeln!(&mut w, "\t\t  // {}", comment).unwrap();
-        }
-
-        writeln!(
-            &mut w,
-            "  {:#06x}: {}\t\t{}",
-            instr.address(),
-            instr.mnemonic().expect("no mnmemonic found"),
-            instr.op_str().expect("no op_str found"),
-        )
-            .unwrap();
+pub(crate) fn append_line_offsets(source: &str, out: &mut Vec<raw::LineOffset>) {
+    // The empty file has only one line offset for the start.
+    if source.is_empty() {
+        out.push(raw::LineOffset(0));
+        return;
     }
 
-    writeln!(&mut w).unwrap();
+    let buf_ptr = source.as_ptr();
+    out.extend(source.lines().map(move |line| {
+        // let line = token.get_src_line();
+        // let tokens = match &sm {
+        //     DecodedMap::Regular(sm) => sm.tokens(),
+        //     DecodedMap::Hermes(smh) => smh.tokens(),
+        //     DecodedMap::Index(_smi) => unreachable!(),
+        // };
+        raw::LineOffset(unsafe { line.as_ptr().offset_from(buf_ptr) as usize } as u32)
+    }));
+
+    // If the file ends with a line break, add another line offset for the empty last line
+    // (the lines iterator skips it).
+    if source.ends_with('\n') {
+        out.push(raw::LineOffset(source.len() as u32));
+    }
 }
-//https://github.com/dinfuehr/dora/blob/687efd630c4e1c30104d72ed6d47ec578119e4d8/dora-runtime/src/disassembler/capstone.rs#L19
+//https://github.com/getsentry/symbolic/blob/09c291ba428303b76b0a8501d0b19ed9333abea0/symbolic-sourcemapcache/src/writer.rs#L310

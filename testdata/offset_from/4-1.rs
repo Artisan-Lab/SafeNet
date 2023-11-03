@@ -1,32 +1,32 @@
-impl<T: RawDeviceId, U, const N: usize> IdArray<T, U, N> {
-    /// Creates a new instance of the array.
-    ///
-    /// The contents are derived from the given identifiers and context information.
-    pub const fn new(ids: [T; N], infos: [Option<U>; N]) -> Self
-        where
-            T: ~ const RawDeviceId + Copy,
-            T::RawType: Copy + Clone,
-    {
-        let mut array = Self {
-            ids: IdArrayIds {
-                ids: [T::ZERO; N],
-                sentinel: T::ZERO,
-            },
-            id_infos: infos,
-        };
-        let mut i = 0usize;
-        while i < N {
-            // SAFETY: Both pointers are within `array` (or one byte beyond), consequently they are
-            // derived from the same allocated object. We are using a `u8` pointer, whose size 1,
-            // so the pointers are necessarily 1-byte aligned.
-            let offset = unsafe {
-                (&array.id_infos[i] as *const _ as *const u8)
-                    .offset_from(&array.ids.ids[i] as *const _ as _)
-            };
-            array.ids.ids[i] = ids[i].to_rawid(offset);
-            i += 1;
+/// Read `u8`s and returns a byte slice up until a given predicate returns true
+/// * `ctx` - The context required by `u8`. It will be passed to every `u8` when constructing.
+/// * `predicate` - the predicate that decides when to stop reading `u8`s
+/// The predicate takes two parameters: the number of bits that have been read so far,
+/// and a borrow of the latest value to have been read. It should return `true` if reading
+/// should now stop, and `false` otherwise
+fn read_slice_with_predicate<'a, Ctx: Copy, Predicate: FnMut(usize, &u8) -> bool>(
+    input: &'a BitSlice<u8, Msb0>,
+    ctx: Ctx,
+    mut predicate: Predicate,
+) -> Result<(&'a BitSlice<u8, Msb0>, &[u8]), DekuError>
+    where
+        u8: DekuRead<'a, Ctx>,
+{
+    let mut rest = input;
+    let mut value;
+
+    loop {
+        let (new_rest, val) = u8::read(rest, ctx)?;
+        rest = new_rest;
+
+        let read_idx = unsafe { rest.as_bitptr().offset_from(input.as_bitptr()) } as usize;
+        value = input[..read_idx].domain().region().unwrap().1;
+
+        if predicate(read_idx, &val) {
+            break;
         }
-        array
     }
+
+    Ok((rest, value))
 }
-//https://github.com/AsahiLinux/linux/blob/b5c05cbffb0488c7618106926d522cc3b43d93d5/rust/kernel/driver.rs#L183
+//https://github.com/sharksforarms/deku/blob/d04559605bed4476b1a78aaffd843377d6ab8fe6/src/impls/slice.rs#L28

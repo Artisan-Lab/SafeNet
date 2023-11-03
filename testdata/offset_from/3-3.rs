@@ -1,56 +1,47 @@
-fn merge_sorted_cursors(&mut self) {
-    fn to_cursor(range: BufferRange, forward: bool) -> Cursor {
-        if forward {
-            Cursor {
-                anchor: range.from,
-                position: range.to,
-            }
-        } else {
-            Cursor {
-                anchor: range.to,
-                position: range.from,
-            }
-        }
-    }
+fn parse_entry_at_offset(data: &[u8], offset: u32) -> Result<Entry<'_>> {
+    fn entry_impl(data: &[u8], offset: u32) -> Option<Result<Entry<'_>>> {
+        let mut data = data.get(offset as usize..)?;
+        let start = data.as_ptr();
 
-    let ptr_range = self.cursors.as_mut_ptr_range();
-    let start_ptr = ptr_range.start;
-    let end_ptr = ptr_range.end;
-
-    let mut write_ptr = start_ptr;
-    let mut read_ptr = unsafe { write_ptr.add(1) };
-    let mut write_i = 0;
-
-    let (mut range, mut forward) = unsafe { write_ptr.read() }.to_range_and_direction();
-    while read_ptr != end_ptr {
-        let other_cursor = unsafe { read_ptr.read() };
-        let (other_range, other_forward) = other_cursor.to_range_and_direction();
-
-        if other_range.from <= range.to {
-            if write_i < self.main_cursor_index as _ {
-                self.main_cursor_index -= 1;
-            }
-
-            range.to = range.to.max(other_range.to);
-        } else {
-            let cursor = to_cursor(range, forward);
-            let store_ptr = write_ptr;
-            write_i += 1;
-
-            range = other_range;
-            forward = other_forward;
-
-            unsafe { write_ptr = write_ptr.add(1) };
-            unsafe { store_ptr.write(cursor) };
+        let lfh = data.read_pod::<LocalFileHeader>()?;
+        if lfh.magic != LOCAL_FILE_HEADER_MAGIC {
+            return Some(Err(Error::new(
+                ErrorKind::InvalidData,
+                "local file header contains invalid magic number",
+            )))
         }
 
-        unsafe { read_ptr = read_ptr.add(1) };
+        if (lfh.flags & FLAG_ENCRYPTED) != 0 || (lfh.flags & FLAG_HAS_DATA_DESCRIPTOR) != 0 {
+            return Some(Err(Error::new(
+                ErrorKind::InvalidData,
+                "attempted lookup of unsupported entry",
+            )))
+        }
+
+        let path = data.read_slice(lfh.file_name_length.into())?;
+        let path = Path::new(OsStr::from_bytes(path));
+
+        let _extra = data.read_slice(lfh.extra_field_length.into())?;
+        // SAFETY: Both pointers point into the same underlying byte array.
+        let data_offset = offset as usize
+            + usize::try_from(unsafe { data.as_ptr().offset_from(start) }).unwrap();
+        let data = data.read_slice(lfh.compressed_size as usize)?;
+
+        let entry = Entry {
+            compression: lfh.compression,
+            path,
+            data_offset,
+            data,
+        };
+
+        Some(Ok(entry))
     }
 
-    let cursor = to_cursor(range, forward);
-    unsafe { write_ptr.write(cursor) };
-
-    let len = unsafe { write_ptr.add(1).offset_from(start_ptr) as _ };
-    self.cursors.truncate(len);
+    entry_impl(data, offset).unwrap_or_else(|| {
+        Err(Error::new(
+            ErrorKind::InvalidData,
+            "failed to read archive entry",
+        ))
+    })
 }
-//https://github.com/vamolessa/pepper/blob/10955408464a4c5958f2c32ee7e88607ce03b20a/pepper/src/cursor.rs#L145
+//https://github.com/libbpf/blazesym/blob/e07c5adc3af1724e3ed89760141003e702984c06/src/zip.rs#L188

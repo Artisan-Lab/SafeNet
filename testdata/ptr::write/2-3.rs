@@ -1,27 +1,17 @@
-fn swap<T>(a: &mut T, b: &mut T) {
-     unsafe {
-         // Create a bitwise copy of the value at `a` in `tmp`.
-         let tmp = ptr::read(a);
-
-         // Exiting at this point (either by explicitly returning or by
-         // calling a function which panics) would cause the value in `tmp` to
-         // be dropped while the same value is still referenced by `a`. This
-         // could trigger undefined behavior if `T` is not `Copy`.
-
-         // Create a bitwise copy of the value at `b` in `a`.
-         // This is safe because mutable references cannot alias.
-         ptr::copy_nonoverlapping(b, a, 1);
-
-         // As above, exiting here could trigger undefined behavior because
-         // the same value is referenced by `a` and `b`.
-
-         // Move `tmp` into `b`.
-         ptr::write(b, tmp);
-
-         // `tmp` has been moved (`write` takes ownership of its second argument),
-         // so nothing is dropped implicitly here.
+pub fn visit_clobber<T: DummyAstNode>(t: &mut T, f: impl FnOnce(T) -> T) {
+    unsafe {
+        // Safe because `t` is used in a read-only fashion by `read()` before
+        // being overwritten by `write()`.
+        let old_t = ptr::read(t);
+        let new_t =
+            panic::catch_unwind(panic::AssertUnwindSafe(|| f(old_t))).unwrap_or_else(|err| {
+                // Set `t` to some valid but possible meaningless value,
+                // and pass the fatal error further.
+                ptr::write(t, T::dummy());
+                panic::resume_unwind(err);
+            });
+        ptr::write(t, new_t);
     }
 }
 
-
-// https://github.com/rust-lang/rust/blob/84d44dd1d8ec1e98fff94272ba4f96b2a1f044ca/library/core/src/ptr/mod.rs#L1098
+// https://github.com/crablang/crab/blob/bbb1ac31cc3ab9a2148eb94675f7b3f3fb0ff285/compiler/rustc_ast/src/mut_visit.rs#L320

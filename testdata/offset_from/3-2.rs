@@ -1,24 +1,26 @@
-pub fn parse_timestamp_from_string<T>(s: T, fmt: &str) -> Result<(usize, UnixTimestamp)>
-    where
-        T: Into<Vec<u8>>,
-{
-    let mut new_tm: libc::tm = unsafe { std::mem::zeroed() };
-    let fmt: Cow<'_, CStr> = if let Ok(cs) = CStr::from_bytes_with_nul(fmt.as_bytes()) {
-        Cow::from(cs)
-    } else {
-        Cow::from(CString::new(fmt.as_bytes())?)
-    };
-    unsafe {
-        let val = CString::new(s)?;
-        let ret = strptime(val.as_ptr(), fmt.as_ptr(), std::ptr::addr_of_mut!(new_tm));
-        if ret.is_null() {
-            return Err("Could not parse time with strptime.".into());
-        }
-        let rest: isize = val.as_ptr().offset_from(ret);
-        Ok((
-            rest.unsigned_abs(),
-            mktime(std::ptr::addr_of!(new_tm)) as u64,
-        ))
+fn conflicts(&self, other: &Self) -> bool {
+    debug_assert!(self.range.0 <= self.range.1);
+    debug_assert!(other.range.0 <= other.range.1);
+
+    if other.range.0 >= self.range.1 || self.range.0 >= other.range.1 {
+        return false;
     }
+
+    // The Diophantine equation which describes whether any integers can combine the data pointers and strides of the two arrays s.t.
+    // they yield the same element has a solution if and only if the GCD of all strides divides the difference of the data pointers.
+    //
+    // That solution could be out of bounds which mean that this is still an over-approximation.
+    // It appears sufficient to handle typical cases like the color channels of an image,
+    // but fails when slicing an array with a step size that does not divide the dimension along that axis.
+    //
+    // https://users.rust-lang.org/t/math-for-borrow-checking-numpy-arrays/73303
+    let ptr_diff = unsafe { self.data_ptr.offset_from(other.data_ptr).abs() };
+    let gcd_strides = gcd(self.gcd_strides, other.gcd_strides);
+
+    if ptr_diff % gcd_strides != 0 {
+        return false;
+    }
+
+    // By default, a conflict is assumed as it is the safe choice without actually solving the aliasing equation.
+    true
 }
-//https://github.com/meli/meli/blob/7998e1e77ef057bab28434edefb79d7be6a4de33/melib/src/utils/datetime.rs#L511

@@ -1,94 +1,34 @@
-fn input(
-    &self,
-    mut data: LeasableMutableBuffer<'static, u8>,
-) -> Result<(), (ErrorCode, LeasableMutableBuffer<'static, u8>)> {
-    let algorithm = if let Some(algorithm) = self.algorithm.extract() {
-        algorithm
-    } else {
-        return Err((ErrorCode::RESERVE, data));
-    };
+fn long_describe_prefix(name: &BStr) -> Option<(&BStr, delegate::PrefixHint<'_>)> {
+    let mut iter = name.rsplit(|b| *b == b'-');
+    let candidate = iter.by_ref().find_map(|substr| {
+        if substr.first()? != &b'g' {
+            return None;
+        };
+        let rest = substr.get(1..)?;
+        rest.iter().all(u8::is_ascii_hexdigit).then(|| rest.as_bstr())
+    })?;
 
-    if TCR(self.descriptor.ctrl.get()).interrupt_enabled() || self.compute_requested.get() {
-        // A computation is already in progress
-        return Err((ErrorCode::BUSY, data));
-    }
+    let candidate = iter.clone().any(|token| !token.is_empty()).then_some(candidate);
+    let hint = iter
+        .next()
+        .and_then(|gen| gen.to_str().ok().and_then(|gen| usize::from_str(gen).ok()))
+        .and_then(|generation| {
+            iter.next().map(|token| {
+                let last_token_len = token.len();
+                let first_token_ptr = iter.last().map_or(token.as_ptr(), <[_]>::as_ptr);
+                // SAFETY: both pointers are definitely part of the same object
+                #[allow(unsafe_code)]
+                    let prior_tokens_len: usize = unsafe { token.as_ptr().offset_from(first_token_ptr) }
+                    .try_into()
+                    .expect("positive value");
+                delegate::PrefixHint::DescribeAnchor {
+                    ref_name: name[..prior_tokens_len + last_token_len].as_bstr(),
+                    generation,
+                }
+            })
+        })
+        .unwrap_or(delegate::PrefixHint::MustBeCommit);
 
-    // Need to initialize after checking business, because init will
-    // clear out interrupt state.
-    self.init();
-
-    // Initialize the descriptor, since it is used to track business
-    let len = data.len() as u16;
-    let ctrl = TCR::new(true, TrWidth::Byte, len);
-
-    // Make sure we don't try to process more data than the CRC
-    // DMA operation supports.
-    if data.len() > u16::MAX as usize {
-        // Restore the full slice, calculate the current
-        // window's start offset.
-        let window_ptr = data.as_ptr();
-        data.reset();
-        let start_ptr = data.as_ptr();
-        // Must be strictly positive or zero
-        let start_offset = unsafe { window_ptr.offset_from(start_ptr) } as usize;
-
-        // Reslice the buffer such that it start at the same
-        // position as the old window, but fits the size
-        // constraints
-        data.slice(start_offset..=(start_offset + u16::MAX as usize));
-    }
-
-    self.enable();
-
-    // Enable DMA interrupt
-    self.registers.dmaier.write(DmaInterrupt::DMA::SET);
-
-    // Enable error interrupt
-    self.registers.ier.write(Interrupt::ERR::SET);
-
-    // Configure the data transfer descriptor
-    //
-    // The data length is guaranteed to be <= u16::MAX by the
-    // above LeasableMutableBuffer resizing mechanism
-    self.descriptor.addr.set(data.as_ptr() as u32);
-    self.descriptor.ctrl.set(ctrl.0);
-    self.descriptor.crc.set(0); // this is the CRC compare field, not used
-
-    // Prior to starting the DMA operation, drop the
-    // LeasableBuffer slice. Otherwise we violate Rust's mutable
-    // aliasing rules.
-    let full_slice = data.take();
-    let full_slice_ptr_len = (full_slice.as_mut_ptr(), full_slice.len());
-    self.current_full_buffer.set(full_slice_ptr_len);
-
-    // Ensure the &'static mut slice reference goes out of scope
-    //
-    // We can't use mem::drop on a reference here, clippy will
-    // complain, even though it would be effective at making this
-    // 'static mut buffer inaccessible. For now, just make sure to
-    // not reference it below.
-    //
-    // TODO: this needs a proper type and is a broader issue. See
-    // tock/tock#2637 for more information.
-    //
-    // core::mem::drop(full_slice);
-
-    // Set the descriptor memory address accordingly
-    self.registers
-        .dscr
-        .set(&self.descriptor as *const Descriptor as u32);
-
-    // Configure the unit to compute a checksum
-    self.registers.mr.write(
-        Mode::DIVIDER.val(0)
-            + poly_for_alg(algorithm)
-            + Mode::COMPARE::CLEAR
-            + Mode::ENABLE::Enabled,
-    );
-
-    // Enable DMA channel
-    self.registers.dmaen.write(DmaEnable::DMAEN::SET);
-
-    Ok(())
+    candidate.map(|c| (c, hint))
 }
-//https://github.com/tock/tock/blob/6e0aeb0328a114775ce301bac48682173a54a4bd/chips/sam4l/src/crccu.rs#L467
+//https://github.com/Byron/gitoxide/blob/c3ee57b9d71f650784dc0a5022dbf54fe71e5fe5/gix-revision/src/spec/parse/function.rs#L220

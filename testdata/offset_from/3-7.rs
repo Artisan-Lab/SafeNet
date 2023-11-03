@@ -1,4 +1,10 @@
-pub fn iseq_pc_to_insn_idx(iseq: IseqPtr, pc: *mut VALUE) -> Option<u16> {
-    let pc_zero = unsafe { rb_iseq_pc_at_idx(iseq, 0) };
-    unsafe { pc.offset_from(pc_zero) }.try_into().ok()
+impl<T, const N: usize> Pool<T, N> {
+    /// safety: p must be a pointer obtained from self.alloc that hasn't been freed yet.
+    unsafe fn free(&self, p: NonNull<T>) {
+        let origin = self.data.as_ptr() as *mut T;
+        let n = p.as_ptr().offset_from(origin);
+        assert!(n >= 0);
+        assert!((n as usize) < N);
+        self.used[n as usize].store(false, Ordering::SeqCst);
+    }
 }

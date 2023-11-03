@@ -1,19 +1,10 @@
-pub fn gc_check_and_mark(&mut self, ptr: &T) -> bool {
-    let ptr = ptr as *const T as *mut T;
-    #[cfg(feature = "gc-debug")]
-    self.check_ptr(ptr);
-    let mut page_ptr = PageRef::from_inner(ptr);
-
-    let index = unsafe { ptr.offset_from(page_ptr.get_data_ptr(0)) } as usize;
-    assert!(index < DATA_LEN);
-    let bit_mask = 1 << (index % 64);
-    let bitmap = &mut page_ptr.mark_bits_mut()[index / 64];
-
-    let is_marked = (*bitmap & bit_mask) != 0;
-    *bitmap |= bit_mask;
-    if !is_marked {
-        self.mark_counter += 1;
-    }
-    is_marked
+fn validate_layout<T: InfoInternal + ?Sized>(info: &T, name: &[Char16]) {
+    // Check the hardcoded struct alignment.
+    assert_eq!(mem::align_of_val(info), T::alignment());
+    // Check the hardcoded name slice offset.
+    assert_eq!(
+        unsafe { (name.as_ptr() as *const u8).offset_from(info as *const _ as *const u8) },
+        T::name_offset() as isize
+    );
 }
-//https://github.com/sisshiki1969/ruruby/blob/1c9b7d7738331d2fb9bbe6ae37e261b34317cebb/ruruby/src/alloc.rs#L258
+//https://github.com/rust-osdev/uefi-rs/blob/6b9a4bdb48036d37ab037924a4392d7f7e823db3/uefi/src/proto/media/file/info.rs#L424

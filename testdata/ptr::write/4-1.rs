@@ -1,15 +1,15 @@
-unsafe fn alloc(height: usize, ref_count: usize) -> *mut Self {
-    let layout = Self::get_layout(height);
-    let ptr = alloc(layout).cast::<Self>();
-    if ptr.is_null() {
-        handle_alloc_error(layout);
+pub fn new_source<T: SourceFuncs>(data: T) -> Source {
+    unsafe {
+        let mut funcs: GSourceFuncs = mem::zeroed();
+        funcs.prepare = Some(prepare::<T>);
+        funcs.check = Some(check::<T>);
+        funcs.dispatch = Some(dispatch::<T>);
+        funcs.finalize = Some(finalize::<T>);
+        let mut funcs = Box::new(funcs);
+        let source = g_source_new(&mut *funcs, mem::size_of::<SourceData<T>>() as u32);
+        ptr::write(&mut (*(source as *mut SourceData<T>)).data, data);
+        ptr::write(&mut (*(source as *mut SourceData<T>)).funcs, funcs);
+        from_glib_full(source)
     }
-
-    ptr::write(
-        &mut (*ptr).refs_and_height,
-        AtomicUsize::new((height - 1) | ref_count << HEIGHT_BITS),
-    );
-    ptr::write_bytes((*ptr).tower.pointers.as_mut_ptr(), 0, height);
-    ptr
 }
-// https://github.com/crossbeam-rs/crossbeam/blob/ce31c18607c44d3d07fc3618f981e858b35e3828/crossbeam-skiplist/src/base.rs#L107
+// https://github.com/antoyo/relm/blob/439f5bf8317ea0dadfa7ea4dce05454d856e5a9f/src/core/source.rs#L56
