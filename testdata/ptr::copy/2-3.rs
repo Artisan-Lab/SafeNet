@@ -1,27 +1,25 @@
-pub fn update_with_f32_data(&mut self, metal_cx: &MetalCx, data: &Vec<f32>) {
-    let elem = self.multi_buffer_write();
-    if elem.size < data.len() {
-        elem.buffer = None;
-    }
-    if let None = &elem.buffer {
-        elem.buffer = Some(
-            metal_cx.device.new_buffer(
-                (data.len() * std::mem::size_of::<f32>()) as u64,
-                MTLResourceOptions::CPUCacheModeDefaultCache
-            )
-        );
-        elem.size = data.len()
-    }
-    if let Some(buffer) = &elem.buffer {
-        let p = buffer.contents();
-        
+impl<'l, 'r, 'dst, T, G> Drop for BranchlessMergeState<'l, 'r, 'dst, T, G> {
+    fn drop(&mut self) {
         unsafe {
-            std::ptr::copy(data.as_ptr(), p as *mut f32, data.len());
+            // Extra sanity check.
+            let left_len = self
+                .left_end
+                .offset_from(self.left_begin)
+                .try_into()
+                .unwrap_abort();
+            let right_len = self
+                .right_end
+                .offset_from(self.right_begin)
+                .try_into()
+                .unwrap_abort();
+            assert_abort(left_len + right_len == self.dst.len());
+
+            // SAFETY: ok by our sanity check.
+            let dst_begin = self.dst.begin();
+            let mid = dst_begin.add(left_len);
+            ptr::copy(self.left_begin, dst_begin, left_len);
+            ptr::copy(self.right_begin, mid, right_len);
         }
-        buffer.did_modify_range(NSRange::new(0 as u64, (data.len() * std::mem::size_of::<f32>()) as u64));
     }
-    elem.used = data.len()
 }
-
-
-// https://github.com/makepad/makepad.github.io/blob/3b4c0ba22cb02ba87d067c0f73b013c66e8bd6bd/render/src/cx_metal.rs#L551
+//https://github.com/orlp/glidesort/blob/a9bac7f27179d7d2d97ab6fdebbd42dd6477de3d/src/branchless_merge.rs#L406

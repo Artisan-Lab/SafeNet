@@ -1,17 +1,15 @@
-impl ${style_struct.gecko_struct_name} {
-    #[allow(dead_code, unused_variables)]
-    pub fn default(document: &structs::Document) -> Arc<Self> {
+pub fn allocate_zeroed(layout: Layout) -> Result<NonNull<[u8]>, AllocError> {
+    let layout_size = layout.size();
+    if layout.align() <= MIN_ALIGN && layout.align() <= layout_size {
+        NonNull::new(unsafe { libc::calloc(layout_size, 1) as *mut u8 })
+            .ok_or(AllocError)
+            .map(|ptr| NonNull::slice_from_raw_parts(ptr, layout_size))
+    } else {
+        let ptr = allocate(layout)?;
         unsafe {
-            let mut result = UniqueArc::<Self>::new_uninit();
-            // FIXME(bug 1595895): Zero the memory to keep valgrind happy, but
-            // these looks like Valgrind false-positives at a quick glance.
-            ptr::write_bytes::<Self>(result.as_mut_ptr(), 0, 1);
-            Gecko_Construct_Default_${style_struct.gecko_ffi_name}(
-                result.as_mut_ptr() as *mut _,
-                document,
-            );
-            UniqueArc::assume_init(result).shareable()
+            ptr::write_bytes(ptr.as_mut_ptr(), 0, layout_size);
         }
+        Ok(ptr)
     }
 }
-// https://github.com/servo/servo/blob/f11c6045e33a921f03223c313781586189309bd2/components/style/properties/gecko.mako.rs#L496
+// https://github.com/GetFirefly/firefly/blob/8e89bc7ec33cb8ffa9a60283c8dcb7ff62ead5fa/library/system/src/unix/alloc.rs#L35

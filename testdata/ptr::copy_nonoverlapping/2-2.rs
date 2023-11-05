@@ -1,44 +1,27 @@
-fn alloc(&mut self) -> usize {
-    let ret = self.head;
-    if ret == self.data.len() {
-        let curr_len = self.data.len();
-        if curr_len == self.data.capacity() {
-            let extra = max(128, curr_len);
-            let r = unsafe { __wbindgen_externref_table_grow(extra) };
-            if r == -1 {
-                internal_error("table grow failure")
-            }
-            if self.base == 0 {
-                self.base = r as usize;
-            } else if self.base + self.data.len() != r as usize {
-                internal_error("someone else allocated table entries?")
-            }
+fn swap<T>(a: &mut T, b: &mut T) {
+    unsafe {
+        // Create a bitwise copy of the value at `a` in `tmp`.
+        let tmp = ptr::read(a);
 
-            // poor man's `try_reserve_exact` until that's stable
-            unsafe {
-                let new_cap = self.data.capacity() + extra;
-                let size = mem::size_of::<usize>() * new_cap;
-                let align = mem::align_of::<usize>();
-                let layout = match Layout::from_size_align(size, align) {
-                    Ok(l) => l,
-                    Err(_) => internal_error("size/align layout failure"),
-                };
-                let ptr = alloc::alloc(layout) as *mut usize;
-                if ptr.is_null() {
-                    internal_error("allocation failure");
-                }
-                ptr::copy_nonoverlapping(self.data.as_ptr(), ptr, self.data.len());
-                let new_vec = Vec::from_raw_parts(ptr, self.data.len(), new_cap);
-                let mut old = mem::replace(&mut self.data, new_vec);
-                old.set_len(0);
-            }
-        }
+        // Exiting at this point (either by explicitly returning or by
+        // calling a function which panics) would cause the value in `tmp` to
+        // be dropped while the same value is still referenced by `a`. This
+        // could trigger undefined behavior if `T` is not `Copy`.
 
-        // custom condition to ensure `push` below doesn't call `reserve` in
-        // optimized builds which pulls in lots of panic infrastructure
-        if self.data.len() >= self.data.capacity() {
-            internal_error("push should be infallible now")
-        }
-        self.data.push(ret + 1);
-    }
-    // https://github.com/rustwasm/wasm-bindgen/blob/4aae6b38e6bed37d3b908f6e99611549840ab395/src/externref.rs#L62
+        // Create a bitwise copy of the value at `b` in `a`.
+        // This is safe because mutable references cannot alias.
+        ptr::copy_nonoverlapping(b, a, 1);
+
+        // As above, exiting here could trigger undefined behavior because
+        // the same value is referenced by `a` and `b`.
+
+        // Move `tmp` into `b`.
+        ptr::write(b, tmp);
+
+        // `tmp` has been moved (`write` takes ownership of its second argument),
+        // so nothing is dropped implicitly here.
+   }
+}
+
+
+// https://github.com/rust-lang/rust/blob/84d44dd1d8ec1e98fff94272ba4f96b2a1f044ca/library/core/src/ptr/mod.rs#L1098

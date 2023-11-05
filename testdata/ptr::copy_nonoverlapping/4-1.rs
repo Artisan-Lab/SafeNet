@@ -1,15 +1,11 @@
-fn into_payload(self) -> RocResultPayload<T, E> {
-    let mut value = MaybeUninit::uninit();
-
-    // copy the value into our MaybeUninit memory
+pub(crate) fn from_nsdata(data: id) -> Vec<u8> {
     unsafe {
-        core::ptr::copy_nonoverlapping(&self.payload, value.as_mut_ptr(), 1);
+        let len: NSUInteger = msg_send![data, length];
+        let bytes: *const c_void = msg_send![data, bytes];
+        let mut out: Vec<u8> = Vec::with_capacity(len as usize);
+        std::ptr::copy_nonoverlapping(bytes as *const u8, out.as_mut_ptr(), len as usize);
+        out.set_len(len as usize);
+        out
     }
-
-    // don't run the destructor on self; the `payload` briefly has two owners
-    // but only `value` is allowed to drop it (after initialization)
-    core::mem::forget(self);
-
-    unsafe { value.assume_init() }
 }
-// https://github.com/roc-lang/roc/blob/93cb8f7c7a11573159c2ddbb2c4760f69a8de3a4/crates/roc_std/src/lib.rs#L159
+// https://github.com/linebender/druid/blob/e53a5ab72c40191b3f92edef9ebf4da07da254f3/druid-shell/src/backend/mac/util.rs#L60

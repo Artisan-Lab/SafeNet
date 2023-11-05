@@ -8,4 +8,5 @@ pub(crate) fn from_nsdata(data: id) -> Vec<u8> {
         out
     }
 }
+
 // https://github.com/linebender/druid/blob/e53a5ab72c40191b3f92edef9ebf4da07da254f3/druid-shell/src/backend/mac/util.rs#L60

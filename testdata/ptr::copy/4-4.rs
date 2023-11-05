@@ -1,50 +1,48 @@
-unsafe fn nonnull_filter_impl<T, I>(values: &[T], mut mask_chunks: I, filter_count: usize) -> Vec<T>
-where
-    T: NativeType + Simd,
-    I: BitChunkIterExact<u64>,
-{
-    let mut chunks = values.chunks_exact(64);
-    let mut new = Vec::<T>::with_capacity(filter_count);
-    let mut dst = new.as_mut_ptr();
+pub fn read_to_buffer(&mut self, target: &mut [u8]) -> usize {
+    let mut remaining = target.len();
+    let mut read_len = 0;
+    let buf = &mut self.buf;
 
-    chunks
-        .by_ref()
-        .zip(mask_chunks.by_ref())
-        .for_each(|(chunk, mask_chunk)| {
-            let ones = mask_chunk.count_ones();
-            let leading_ones = get_leading_ones(mask_chunk);
-
-            if ones == leading_ones {
-                let size = leading_ones as usize;
-                unsafe {
-                    std::ptr::copy(chunk.as_ptr(), dst, size);
-                    dst = dst.add(size);
-                }
-                return;
+    loop {
+        if remaining == 0 {
+            if self.len != 0 {
+                self.len -= read_len;
             }
+            break read_len;
+        }
 
-            let ones_iter = BitChunkOnes::from_known_count(mask_chunk, ones as usize);
-            for pos in ones_iter {
-                dst.write(*chunk.get_unchecked(pos));
-                dst = dst.add(1);
+        let data = buf.pop_front();
+
+        if data.is_none() {
+            remaining = 0;
+            continue;
+        }
+
+        let data = unsafe { data.unwrap_unchecked() };
+
+        if data.len() >= remaining {
+            let n = unsafe {
+                let ptr = &mut target[read_len..];
+                std::ptr::copy((&data[..remaining]).as_ptr(), ptr.as_mut_ptr(), remaining);
+                remaining
+            };
+
+            remaining -= n;
+            read_len += n;
+
+            if data.len() != n {
+                buf.push_front(data[n..].to_vec())
             }
-        });
+        } else {
+            let n = unsafe {
+                let ptr = &mut target[read_len..];
+                std::ptr::copy(data.as_ptr(), ptr.as_mut_ptr(), data.len());
+                data.len()
+            };
 
-    chunks
-        .remainder()
-        .iter()
-        .zip(mask_chunks.remainder_iter())
-        .for_each(|(value, b)| {
-            if b {
-                unsafe {
-                    dst.write(*value);
-                    dst = dst.add(1);
-                };
-            }
-        });
-
-    unsafe { new.set_len(filter_count) };
-    new
+            read_len += n;
+            remaining -= n;
+        }
+    }
 }
-
-// https://github.com/pola-rs/polars/blob/05d9eb20461c44611c4661770f68a50a0072a00a/crates/nano-arrow/src/compute/filter.rs#L46
+// https://github.com/editso/fuso/blob/8086a3136e1a67045f247ffef76ca71c60b078ad/src/core/guard/buffer.rs#L83
