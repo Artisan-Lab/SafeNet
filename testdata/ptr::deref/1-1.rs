@@ -1,6 +1,8 @@
-unsafe fn get_and_increment<T>(ptr: &mut *mut T) -> *mut T {
-    let old = *ptr;
-    *ptr = unsafe { ptr.offset(1) };
-    old
+pub unsafe fn readlink_unsafe(path: *const c_char, buf: *mut u8, bufsz: usize) -> isize {
+    let r = libc::readlink(path, buf.cast(), bufsz - 1);
+    if r >= 0 {
+        *buf.offset(r) = b'\0';
+    }
+    r
 }
-// https://github.com/STMicroelectronics/linux/blob/d33b43a4dcc4ae3cd178793c139756af77e42bde/rust/alloc/slice.rs#L1040
+// https://github.com/topjohnwu/Magisk/blob/606d97ae4d60b4e903ef2944bd3f3fc409a9a2db/native/src/base/files.rs#L36
