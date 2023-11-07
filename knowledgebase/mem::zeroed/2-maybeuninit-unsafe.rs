@@ -1,5 +1,3 @@
-use std::mem;
-use std::ptr;
 use std::mem::MaybeUninit;
 use std::mem::ManuallyDrop;
 
@@ -23,11 +21,11 @@ fn main() {
         MyStruct {
             number: number.assume_init(),
             flag: flag.assume_init(),
-            b: unsafe { &*b },
+            b:&*b ,
         }
     });
 
     let b = Box::new(1);
     foo(&mut *myst as *mut _, &b);
-    println!("{:?}", unsafe { &*myst });
+    println!("{:?}", myst );
 }
