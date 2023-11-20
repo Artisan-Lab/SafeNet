@@ -1,17 +1,27 @@
-pub fn shift(&mut self) {
-    let pos = self.inner.position;
-    let end = self.inner.end;
-    if pos > 0 {
-        unsafe {
-            let length = end - pos;
-            ptr::copy(
-                self.inner.extra()[pos..end].as_ptr(),
-                self.inner.extra_mut()[..length].as_mut_ptr(),
-                length,
-            );
-            self.inner.position = 0;
-            self.inner.end = length;
+pub extern "C" fn zip339_phrase_to_seed(
+    language: Language,
+    phrase: *const c_char,
+    buf: *mut u8,
+) -> bool {
+    assert!(!phrase.is_null());
+    assert!(!buf.is_null());
+
+    if let Ok(language) = language.try_into() {
+        if let Ok(phrase) = unsafe { CStr::from_ptr(phrase) }.to_str() {
+            if let Ok(mnemonic) = zip339::Mnemonic::from_phrase_in(language, phrase) {
+                // Use the empty passphrase.
+                let seed = mnemonic.to_seed("");
+                unsafe {
+                    ptr::copy(seed.as_ptr(), buf, 64);
+                }
+                return true;
+            }
         }
     }
+    unsafe {
+        ptr::write_bytes(buf, 0, 64);
+    }
+    false
 }
-// https://github.com/sozu-proxy/sozu/blob/fc293549814a450e5d20bf682cb8002ce55ee5e7/lib/src/pool.rs#L185
+
+// https://github.com/johnhanlon86/zcash/blob/423489c5e810d0f4deeac7bbbf8522c659ba6f8f/src/rust/src/zip339_ffi.rs#L104
