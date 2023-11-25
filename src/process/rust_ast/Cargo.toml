@@ -1,0 +1,19 @@
+[package]
+name = "def"
+version = "0.1.0"
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies.syn]
+version = "1.0.72"
+default-features = false # do not include the default features, and optionally
+                         # cherry-pick individual features
+features = ["parsing", "full", "extra-traits"]
+
+[dependencies]
+crossbeam-channel = "0.5.5"
+quote = "1.0"
+csv = "1.1"
+log = "0.4.14"
+walkdir = "2"
