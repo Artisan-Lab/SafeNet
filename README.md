@@ -19,21 +19,37 @@ This project aims to extract the Abstract Syntax Tree (AST) from Rust source cod
 
 #####  AST Extraction
 
-The AST extraction is performed using the `rust_ast` module located at `safeNet/src/process/rust_ast`. To extract the AST, run the following command:
+###### Prerequisites ：Ensure that you have Rust installed on your system.
+
+The AST extraction is performed using the `rust_ast` module located at `src/process/rust_ast/src/main.rs`. To extract the AST, run the following command:
 
 ```shell
 cargo run
 ```
 #####  AST Simplification
-The AST extracted from the Rust source code can be further simplified using the `astsimpletree.py `script located at `safeNet/src/process/rust_asttree-json`. This script takes the AST and generates a simplified version. Please refer to the script for further details.
+The AST extracted from the Rust source code can be further simplified using the `simplifyast.py `script located at `safeNet/src/process/rust_asttree-json`. This script takes the AST and generates a simplified version. Please refer to the script for further details.
 
 #####  Minimal AST Tree Construction and Traversal
-The most simplified version of the AST is used to construct a minimal AST tree and perform traversal operations. This process is implemented in the `addnumtree.py` script located at `safeNet/src/process/rust_asttree-json`. The resulting tree can be used for various purposes.
+The most simplified version of the AST is used to construct a minimal AST tree and perform traversal operations. This process is implemented in the `addnumtree.py` script located at `safeNet/src/process/rust_asttree-json`. The resulting tree can be used for input of machine learning.
 
 Please refer to the respective source files for more information on how to use each component of this project.
 
+- ### Data Flow Filter
+Writing Filter Code:  
+Write or place the Rust code you wish to analyze and filter within the file `src/process/filter/tests`.  
+
+Running Data Flow Analysis:  
+Execute the `synparse_run` function present in `src/process/filter/parse_var.rs` to initiate data flow analysis.
+
+Filtering Out Irrelevant Patterns:  
+Review the results obtained after running `synparse_run` to identify and filter out irrelevant patterns as needed based on the data flow analysis performed.
+
 
 - ### machine learning 
+
+#####  Training and Testing Set Generation
+
+The file `src/process/dataprocess/converttrainset.py` is used to read JSON files within a specified directory and randomly combine them to create training and testing sets. Each JSON file is paired with every other file, labeled as 1 if the patterns match and -1 if they don't. The dataset is split using a 3-fold method, generating corresponding training and testing CSV files.
 
 
 ##### Rust Code Similarity Detection using BERT and Siamese Neural Network (SNN)
