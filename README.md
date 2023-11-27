@@ -35,13 +35,13 @@ The most simplified version of the AST is used to construct a minimal AST tree a
 Please refer to the respective source files for more information on how to use each component of this project.
 
 - ### Data Flow Filter
-Writing Filter Code:  
-Write or place the Rust code you wish to analyze and filter within the file `src/process/filter/tests`.  
+##### Writing Filter Code:  
+Write  or place the Rust code you wish to analyze and filter within the file `src/process/filter/tests`.  
 
-Running Data Flow Analysis:  
+##### Running Data Flow Analysis:  
 Execute the `synparse_run` function present in `src/process/filter/parse_var.rs` to initiate data flow analysis.
 
-Filtering Out Irrelevant Patterns:  
+##### Filtering Out Irrelevant Patterns:  
 Review the results obtained after running `synparse_run` to identify and filter out irrelevant patterns as needed based on the data flow analysis performed.
 
 
